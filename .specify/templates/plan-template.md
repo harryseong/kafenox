@@ -31,7 +31,30 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**I. Code Quality**
+- [ ] Code structure and patterns align with project quality standards
+- [ ] Dependencies chosen support code quality tooling (linting, type checking)
+- [ ] Documentation approach defined for public APIs
+
+**II. Testing Standards**
+- [ ] Testing strategy defined (unit, integration, contract tests as applicable)
+- [ ] Test framework and tooling selected
+- [ ] Test coverage targets identified
+- [ ] Performance testing approach defined (if applicable)
+
+**III. User Experience Consistency**
+- [ ] User-facing changes align with existing UX patterns
+- [ ] Design system guidelines identified (if applicable)
+- [ ] Accessibility requirements considered
+- [ ] Error handling and user feedback approach defined
+
+**IV. Performance Requirements**
+- [ ] Performance targets defined and documented
+- [ ] Resource usage constraints identified
+- [ ] Scalability considerations addressed
+- [ ] Performance monitoring approach defined
+
+**Violations/Exceptions**: [List any principle violations with justification and approval status]
 
 ## Project Structure
 
