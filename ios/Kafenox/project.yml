@@ -26,6 +26,7 @@ targets:
     info:
       path: Kafenox/Info.plist
       properties:
+        UILaunchScreen: {}
         UIAppFonts:
           - HankenGrotesk-Variable.ttf
           - DMMono-Regular.ttf
