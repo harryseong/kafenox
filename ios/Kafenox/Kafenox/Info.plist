@@ -24,5 +24,7 @@
 		<string>DMMono-Regular.ttf</string>
 		<string>DMMono-Medium.ttf</string>
 	</array>
+	<key>UILaunchScreen</key>
+	<dict/>
 </dict>
 </plist>
