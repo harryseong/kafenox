@@ -40,6 +40,12 @@ final class CatalogViewModel {
 
     @MainActor
     func load() async {
+        #if DEBUG
+        if APIConfig.useMockData {
+            coffees = Coffee.sampleData
+            return
+        }
+        #endif
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
