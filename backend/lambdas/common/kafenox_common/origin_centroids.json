@@ -1,0 +1,82 @@
+{
+  "Ethiopia": {"lat": 9.145, "lng": 40.4897},
+  "Kenya": {"lat": -0.0236, "lng": 37.9062},
+  "Tanzania": {"lat": -6.369, "lng": 34.8888},
+  "Rwanda": {"lat": -1.9403, "lng": 29.8739},
+  "Burundi": {"lat": -3.3731, "lng": 29.9189},
+  "Uganda": {"lat": 1.3733, "lng": 32.2903},
+  "DR Congo": {"lat": -4.0383, "lng": 21.7587},
+  "Zambia": {"lat": -13.1339, "lng": 27.8493},
+  "Malawi": {"lat": -13.2543, "lng": 34.3015},
+  "Yemen": {"lat": 15.5527, "lng": 48.5164},
+
+  "Colombia": {"lat": 4.5709, "lng": -74.2973},
+  "Brazil": {"lat": -14.235, "lng": -51.9253},
+  "Peru": {"lat": -9.19, "lng": -75.0152},
+  "Ecuador": {"lat": -1.8312, "lng": -78.1834},
+  "Bolivia": {"lat": -16.2902, "lng": -63.5887},
+  "Venezuela": {"lat": 6.4238, "lng": -66.5897},
+  "Guatemala": {"lat": 15.7835, "lng": -90.2308},
+  "Honduras": {"lat": 15.2, "lng": -86.2419},
+  "Mexico": {"lat": 23.6345, "lng": -102.5528},
+  "Costa Rica": {"lat": 9.7489, "lng": -83.7534},
+  "Panama": {"lat": 8.538, "lng": -80.7821},
+  "El Salvador": {"lat": 13.7942, "lng": -88.8965},
+  "Nicaragua": {"lat": 12.8654, "lng": -85.2072},
+  "Cuba": {"lat": 21.5218, "lng": -77.7812},
+  "Jamaica": {"lat": 18.1096, "lng": -77.2975},
+  "Dominican Republic": {"lat": 18.7357, "lng": -70.1627},
+  "Haiti": {"lat": 18.9712, "lng": -72.2852},
+  "Puerto Rico": {"lat": 18.2208, "lng": -66.5901},
+
+  "Indonesia": {"lat": -0.7893, "lng": 113.9213},
+  "Vietnam": {"lat": 14.0583, "lng": 108.2772},
+  "India": {"lat": 20.5937, "lng": 78.9629},
+  "Papua New Guinea": {"lat": -6.315, "lng": 143.9555},
+  "Thailand": {"lat": 15.87, "lng": 100.9925},
+  "Myanmar": {"lat": 21.9162, "lng": 95.956},
+  "Laos": {"lat": 19.8563, "lng": 102.4955},
+  "China": {"lat": 35.8617, "lng": 104.1954},
+  "Philippines": {"lat": 12.8797, "lng": 121.774},
+  "Timor-Leste": {"lat": -8.8742, "lng": 125.7275},
+
+  "Yunnan": {"lat": 24.4798, "lng": 101.0858},
+
+  "Hawaii": {"lat": 19.8968, "lng": -155.5828},
+
+  "Ethiopia:Yirgacheffe": {"lat": 6.1611, "lng": 38.2056},
+  "Ethiopia:Sidamo": {"lat": 6.5, "lng": 38.5},
+  "Ethiopia:Gedeo": {"lat": 6.08, "lng": 38.28},
+  "Ethiopia:Guji": {"lat": 5.85, "lng": 38.85},
+  "Ethiopia:Harrar": {"lat": 9.3107, "lng": 42.1257},
+  "Ethiopia:Limu": {"lat": 8.7, "lng": 36.8},
+
+  "Kenya:Nyeri": {"lat": -0.4197, "lng": 36.9483},
+  "Kenya:Kirinyaga": {"lat": -0.4969, "lng": 37.2792},
+
+  "Colombia:Huila": {"lat": 2.5, "lng": -75.75},
+  "Colombia:Narino": {"lat": 1.2892, "lng": -77.3578},
+  "Colombia:Tolima": {"lat": 3.9, "lng": -75.3},
+  "Colombia:Cauca": {"lat": 2.7, "lng": -76.8},
+  "Colombia:Antioquia": {"lat": 6.5, "lng": -75.5},
+
+  "Guatemala:Antigua": {"lat": 14.5586, "lng": -90.7295},
+  "Guatemala:Huehuetenango": {"lat": 15.3197, "lng": -91.4711},
+
+  "Costa Rica:Tarrazu": {"lat": 9.65, "lng": -84.0},
+
+  "Brazil:Cerrado": {"lat": -18.5, "lng": -47.5},
+  "Brazil:Minas Gerais": {"lat": -18.5122, "lng": -44.555},
+
+  "Indonesia:Sumatra": {"lat": 0.5897, "lng": 101.3431},
+  "Indonesia:Sulawesi": {"lat": -2.5489, "lng": 121.0794},
+  "Indonesia:Java": {"lat": -7.6145, "lng": 110.7122},
+  "Indonesia:Bali": {"lat": -8.3405, "lng": 115.092},
+  "Indonesia:Flores": {"lat": -8.6573, "lng": 121.0794},
+
+  "Panama:Boquete": {"lat": 8.7833, "lng": -82.4333},
+
+  "Rwanda:Nyungwe": {"lat": -2.5, "lng": 29.2},
+
+  "Yemen:Haraz": {"lat": 14.95, "lng": 43.7}
+}

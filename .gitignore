@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .env
+.DS_Store
+backend/cdk.out/
+backend/cdk.context.json

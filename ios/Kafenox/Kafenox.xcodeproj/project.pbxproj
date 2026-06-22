@@ -1,0 +1,518 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		017BDCF8DE9C2D8BD75F56E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB56438A16343774D35E158D /* Assets.xcassets */; };
+		1A191862D824AFDCA6F8523F /* DMMono-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAD6F20CDB33EBD48C534362 /* DMMono-Medium.ttf */; };
+		1CF73235B859B9E741A8FC79 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F564ED163454B24E41530F /* DetailViewModel.swift */; };
+		1FB0E0DC74982AC98D5CF5D9 /* KafenoxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EBEC08D6F40323BDC9B148 /* KafenoxApp.swift */; };
+		20E821E62DCBE66BA4E77F7E /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A97D7A8F352C97CA936F49 /* CatalogViewModel.swift */; };
+		3373CB142C7A300F6901086E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 654C2AF915808DC603B31092 /* Preview Assets.xcassets */; };
+		39405FD99E392932BD9B02FD /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B584780F5933EB17E9375B /* MapViewModel.swift */; };
+		3C1FB37619051DE219EB7D56 /* KafenoxTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93503FD335DC12C519E5DBF9 /* KafenoxTabBar.swift */; };
+		43506992021AC6B078B6A803 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BFBC737341176482F4DD45 /* CatalogView.swift */; };
+		47E2E6D363BB6803F7585811 /* Coffee+Visuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9061D5A5B3EF12E0D51654A6 /* Coffee+Visuals.swift */; };
+		4E1E4BB7C3B9C43F42F413CD /* CoffeeGridCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD6F67E6C4B12E1AE2D5253 /* CoffeeGridCard.swift */; };
+		58BCB172B38319EBCEEEE9AF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE6E73DD5B97C7285163FEE /* Theme.swift */; };
+		5C6E3196589E6C87FB58884E /* DMMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D5EAF2B930591D0A5D0C642C /* DMMono-Regular.ttf */; };
+		61CA11B400767DF3B1A6EDFA /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE933755027D97FE2E3DA9 /* FlowLayout.swift */; };
+		660512EFAAB8598270F1CDB3 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7806F9F3976236D1017CD3 /* KeychainStore.swift */; };
+		8E3380F0B576C501BC44A009 /* ScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD02B96D6D03F18B2323B2F /* ScanFlowView.swift */; };
+		9278D9B9DD2A8E9F0DDF41AC /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68CEA4F95F86BB4381ABA1E /* ScanningView.swift */; };
+		AD2EDD2C590D671049D3FFC7 /* OriginPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A757E93A8F9AAA2946A6BC /* OriginPin.swift */; };
+		AE7B06F81765988D4B1EC8BC /* HankenGrotesk-Variable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 17DD9C903BEFB8244E2F6724 /* HankenGrotesk-Variable.ttf */; };
+		BDCE84500CE35E8859D39167 /* Coffee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4286B8115318769EDA0B4455 /* Coffee.swift */; };
+		C006F019E871286CEA467BFC /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CAFBB348BF645EF65B336CD /* APIClient.swift */; };
+		C41D345FECF54E1B5E2A5E4C /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A945EA005BAB8B303B2703 /* DetailView.swift */; };
+		C446E83AD444DE7AC1B44779 /* CoffeeListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD39F0BCDD6F5D775C62D6FC /* CoffeeListRow.swift */; };
+		C734CA8ABA26AD5F4167550C /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84024E78D9D7DC86EE721740 /* ThemeStore.swift */; };
+		D7624CD9232818E0ECEDB074 /* OriginsMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24EBF5E440CB29CE6EBC3B2 /* OriginsMapView.swift */; };
+		D79195614DC457F28F70DE1B /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1937748DC5CE89FE0F275E /* ReviewView.swift */; };
+		D99CAECB7598F06757E2D93B /* ScanCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8A1414A2C4694BE03B6C76 /* ScanCameraView.swift */; };
+		EFFC48C70BB2CCE253D6EA19 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09033BC0D91B72A5537E846C /* APIConfig.swift */; };
+		FF6B5BA864156321912CF54C /* ScanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */; };
+		FFF40E8796EED77ED1DC3792 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5646A65EF3D8D3D43D3079 /* RootView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		09033BC0D91B72A5537E846C /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
+		17DD9C903BEFB8244E2F6724 /* HankenGrotesk-Variable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HankenGrotesk-Variable.ttf"; sourceTree = "<group>"; };
+		1AAE933755027D97FE2E3DA9 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		27EBEC08D6F40323BDC9B148 /* KafenoxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafenoxApp.swift; sourceTree = "<group>"; };
+		2E5646A65EF3D8D3D43D3079 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		37BFBC737341176482F4DD45 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
+		3CAFBB348BF645EF65B336CD /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		3DE6E73DD5B97C7285163FEE /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		3E1937748DC5CE89FE0F275E /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		41A945EA005BAB8B303B2703 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		4286B8115318769EDA0B4455 /* Coffee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coffee.swift; sourceTree = "<group>"; };
+		45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModel.swift; sourceTree = "<group>"; };
+		654C2AF915808DC603B31092 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		740EE22BFAAD40D044762913 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7E8A1414A2C4694BE03B6C76 /* ScanCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCameraView.swift; sourceTree = "<group>"; };
+		7FD6F67E6C4B12E1AE2D5253 /* CoffeeGridCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeGridCard.swift; sourceTree = "<group>"; };
+		84024E78D9D7DC86EE721740 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
+		9061D5A5B3EF12E0D51654A6 /* Coffee+Visuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Coffee+Visuals.swift"; sourceTree = "<group>"; };
+		93503FD335DC12C519E5DBF9 /* KafenoxTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafenoxTabBar.swift; sourceTree = "<group>"; };
+		A8F564ED163454B24E41530F /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		AAD02B96D6D03F18B2323B2F /* ScanFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanFlowView.swift; sourceTree = "<group>"; };
+		AAD6F20CDB33EBD48C534362 /* DMMono-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-Medium.ttf"; sourceTree = "<group>"; };
+		AD39F0BCDD6F5D775C62D6FC /* CoffeeListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeListRow.swift; sourceTree = "<group>"; };
+		B60123D4A28F6191ED10565B /* Kafenox.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Kafenox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7A97D7A8F352C97CA936F49 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
+		D4B584780F5933EB17E9375B /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		D5EAF2B930591D0A5D0C642C /* DMMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-Regular.ttf"; sourceTree = "<group>"; };
+		DC7806F9F3976236D1017CD3 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		E24EBF5E440CB29CE6EBC3B2 /* OriginsMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginsMapView.swift; sourceTree = "<group>"; };
+		E4A757E93A8F9AAA2946A6BC /* OriginPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginPin.swift; sourceTree = "<group>"; };
+		F68CEA4F95F86BB4381ABA1E /* ScanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningView.swift; sourceTree = "<group>"; };
+		FB56438A16343774D35E158D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4F82CD6B04BC4D34C5D3E889 /* Scan */ = {
+			isa = PBXGroup;
+			children = (
+				3E1937748DC5CE89FE0F275E /* ReviewView.swift */,
+				7E8A1414A2C4694BE03B6C76 /* ScanCameraView.swift */,
+				AAD02B96D6D03F18B2323B2F /* ScanFlowView.swift */,
+				F68CEA4F95F86BB4381ABA1E /* ScanningView.swift */,
+			);
+			path = Scan;
+			sourceTree = "<group>";
+		};
+		5F61DD74A546F54CEA8E5CF7 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				654C2AF915808DC603B31092 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		66E2EFC2DA4B5D547022EF19 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B60123D4A28F6191ED10565B /* Kafenox.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		86798A51C1C14A180EFD1AD8 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				E4A757E93A8F9AAA2946A6BC /* OriginPin.swift */,
+				E24EBF5E440CB29CE6EBC3B2 /* OriginsMapView.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		AB44F56252D842875E57156A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4286B8115318769EDA0B4455 /* Coffee.swift */,
+				9061D5A5B3EF12E0D51654A6 /* Coffee+Visuals.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AD933F7EEB26AB23C333A0BC /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				AAD6F20CDB33EBD48C534362 /* DMMono-Medium.ttf */,
+				D5EAF2B930591D0A5D0C642C /* DMMono-Regular.ttf */,
+				17DD9C903BEFB8244E2F6724 /* HankenGrotesk-Variable.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		AE4562FCF41E18156C09C059 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				41A945EA005BAB8B303B2703 /* DetailView.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		B509F71020DFB965A62BEFDC /* Kafenox */ = {
+			isa = PBXGroup;
+			children = (
+				FB56438A16343774D35E158D /* Assets.xcassets */,
+				740EE22BFAAD40D044762913 /* Info.plist */,
+				27EBEC08D6F40323BDC9B148 /* KafenoxApp.swift */,
+				AB44F56252D842875E57156A /* Models */,
+				FE152AA1629316583DEFA086 /* Networking */,
+				5F61DD74A546F54CEA8E5CF7 /* Preview Content */,
+				FFFE0FA942BE1269ACBD61DD /* Resources */,
+				D317A521D18AB7978716B09B /* Theme */,
+				B795AA55E65C3D07333712DF /* ViewModels */,
+				B694455011299E5F44F3D23D /* Views */,
+			);
+			path = Kafenox;
+			sourceTree = "<group>";
+		};
+		B694455011299E5F44F3D23D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				93503FD335DC12C519E5DBF9 /* KafenoxTabBar.swift */,
+				2E5646A65EF3D8D3D43D3079 /* RootView.swift */,
+				D3C8B60522DF4CD1619977AC /* Catalog */,
+				AE4562FCF41E18156C09C059 /* Detail */,
+				86798A51C1C14A180EFD1AD8 /* Map */,
+				4F82CD6B04BC4D34C5D3E889 /* Scan */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B795AA55E65C3D07333712DF /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				C7A97D7A8F352C97CA936F49 /* CatalogViewModel.swift */,
+				A8F564ED163454B24E41530F /* DetailViewModel.swift */,
+				D4B584780F5933EB17E9375B /* MapViewModel.swift */,
+				45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		D317A521D18AB7978716B09B /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				3DE6E73DD5B97C7285163FEE /* Theme.swift */,
+				84024E78D9D7DC86EE721740 /* ThemeStore.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		D3C8B60522DF4CD1619977AC /* Catalog */ = {
+			isa = PBXGroup;
+			children = (
+				37BFBC737341176482F4DD45 /* CatalogView.swift */,
+				7FD6F67E6C4B12E1AE2D5253 /* CoffeeGridCard.swift */,
+				AD39F0BCDD6F5D775C62D6FC /* CoffeeListRow.swift */,
+				1AAE933755027D97FE2E3DA9 /* FlowLayout.swift */,
+			);
+			path = Catalog;
+			sourceTree = "<group>";
+		};
+		F1AEABDAFBDA31DF4ACD6721 = {
+			isa = PBXGroup;
+			children = (
+				B509F71020DFB965A62BEFDC /* Kafenox */,
+				66E2EFC2DA4B5D547022EF19 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FE152AA1629316583DEFA086 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				3CAFBB348BF645EF65B336CD /* APIClient.swift */,
+				09033BC0D91B72A5537E846C /* APIConfig.swift */,
+				DC7806F9F3976236D1017CD3 /* KeychainStore.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		FFFE0FA942BE1269ACBD61DD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AD933F7EEB26AB23C333A0BC /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A5A64F86460A4E951CF942D6 /* Kafenox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF08884666214FCEAC16F131 /* Build configuration list for PBXNativeTarget "Kafenox" */;
+			buildPhases = (
+				FEEDA35D348D523108CD39F3 /* Sources */,
+				6026BDF484F59301360F564E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Kafenox;
+			packageProductDependencies = (
+			);
+			productName = Kafenox;
+			productReference = B60123D4A28F6191ED10565B /* Kafenox.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		074F6014257BE647DA8AA1A2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					A5A64F86460A4E951CF942D6 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 574C6B51350AE1054413DD9D /* Build configuration list for PBXProject "Kafenox" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F1AEABDAFBDA31DF4ACD6721;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 66E2EFC2DA4B5D547022EF19 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A5A64F86460A4E951CF942D6 /* Kafenox */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6026BDF484F59301360F564E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				017BDCF8DE9C2D8BD75F56E4 /* Assets.xcassets in Resources */,
+				1A191862D824AFDCA6F8523F /* DMMono-Medium.ttf in Resources */,
+				5C6E3196589E6C87FB58884E /* DMMono-Regular.ttf in Resources */,
+				AE7B06F81765988D4B1EC8BC /* HankenGrotesk-Variable.ttf in Resources */,
+				3373CB142C7A300F6901086E /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FEEDA35D348D523108CD39F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C006F019E871286CEA467BFC /* APIClient.swift in Sources */,
+				EFFC48C70BB2CCE253D6EA19 /* APIConfig.swift in Sources */,
+				43506992021AC6B078B6A803 /* CatalogView.swift in Sources */,
+				20E821E62DCBE66BA4E77F7E /* CatalogViewModel.swift in Sources */,
+				47E2E6D363BB6803F7585811 /* Coffee+Visuals.swift in Sources */,
+				BDCE84500CE35E8859D39167 /* Coffee.swift in Sources */,
+				4E1E4BB7C3B9C43F42F413CD /* CoffeeGridCard.swift in Sources */,
+				C446E83AD444DE7AC1B44779 /* CoffeeListRow.swift in Sources */,
+				C41D345FECF54E1B5E2A5E4C /* DetailView.swift in Sources */,
+				1CF73235B859B9E741A8FC79 /* DetailViewModel.swift in Sources */,
+				61CA11B400767DF3B1A6EDFA /* FlowLayout.swift in Sources */,
+				1FB0E0DC74982AC98D5CF5D9 /* KafenoxApp.swift in Sources */,
+				3C1FB37619051DE219EB7D56 /* KafenoxTabBar.swift in Sources */,
+				660512EFAAB8598270F1CDB3 /* KeychainStore.swift in Sources */,
+				39405FD99E392932BD9B02FD /* MapViewModel.swift in Sources */,
+				AD2EDD2C590D671049D3FFC7 /* OriginPin.swift in Sources */,
+				D7624CD9232818E0ECEDB074 /* OriginsMapView.swift in Sources */,
+				D79195614DC457F28F70DE1B /* ReviewView.swift in Sources */,
+				FFF40E8796EED77ED1DC3792 /* RootView.swift in Sources */,
+				D99CAECB7598F06757E2D93B /* ScanCameraView.swift in Sources */,
+				8E3380F0B576C501BC44A009 /* ScanFlowView.swift in Sources */,
+				FF6B5BA864156321912CF54C /* ScanViewModel.swift in Sources */,
+				9278D9B9DD2A8E9F0DDF41AC /* ScanningView.swift in Sources */,
+				58BCB172B38319EBCEEEE9AF /* Theme.swift in Sources */,
+				C734CA8ABA26AD5F4167550C /* ThemeStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		60033D934507A9FD58B369B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Kafenox/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.harryseong.kafenox;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8FE0BD7F705B6ABFFEF15B7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Kafenox/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.harryseong.kafenox;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BBFE864CD8A34404FE493612 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		D3EDA8C9739ACA68D2719289 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		574C6B51350AE1054413DD9D /* Build configuration list for PBXProject "Kafenox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBFE864CD8A34404FE493612 /* Debug */,
+				D3EDA8C9739ACA68D2719289 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AF08884666214FCEAC16F131 /* Build configuration list for PBXNativeTarget "Kafenox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60033D934507A9FD58B369B9 /* Debug */,
+				8FE0BD7F705B6ABFFEF15B7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 074F6014257BE647DA8AA1A2 /* Project object */;
+}
