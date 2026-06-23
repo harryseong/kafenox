@@ -35,6 +35,7 @@
 		D79195614DC457F28F70DE1B /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1937748DC5CE89FE0F275E /* ReviewView.swift */; };
 		D99CAECB7598F06757E2D93B /* ScanCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8A1414A2C4694BE03B6C76 /* ScanCameraView.swift */; };
 		EFFC48C70BB2CCE253D6EA19 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09033BC0D91B72A5537E846C /* APIConfig.swift */; };
+		F68CF49A6FB27494861AF5F4 /* Coffee+SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD292688B322AB1711E3BD3D /* Coffee+SampleData.swift */; };
 		FF6B5BA864156321912CF54C /* ScanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */; };
 		FFF40E8796EED77ED1DC3792 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5646A65EF3D8D3D43D3079 /* RootView.swift */; };
 /* End PBXBuildFile section */
@@ -68,6 +69,7 @@
 		D4B584780F5933EB17E9375B /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		D5EAF2B930591D0A5D0C642C /* DMMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DMMono-Regular.ttf"; sourceTree = "<group>"; };
 		DC7806F9F3976236D1017CD3 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		DD292688B322AB1711E3BD3D /* Coffee+SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Coffee+SampleData.swift"; sourceTree = "<group>"; };
 		E24EBF5E440CB29CE6EBC3B2 /* OriginsMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginsMapView.swift; sourceTree = "<group>"; };
 		E4A757E93A8F9AAA2946A6BC /* OriginPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginPin.swift; sourceTree = "<group>"; };
 		F68CEA4F95F86BB4381ABA1E /* ScanningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningView.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				4286B8115318769EDA0B4455 /* Coffee.swift */,
+				DD292688B322AB1711E3BD3D /* Coffee+SampleData.swift */,
 				9061D5A5B3EF12E0D51654A6 /* Coffee+Visuals.swift */,
 			);
 			path = Models;
@@ -303,6 +306,7 @@
 				EFFC48C70BB2CCE253D6EA19 /* APIConfig.swift in Sources */,
 				43506992021AC6B078B6A803 /* CatalogView.swift in Sources */,
 				20E821E62DCBE66BA4E77F7E /* CatalogViewModel.swift in Sources */,
+				F68CF49A6FB27494861AF5F4 /* Coffee+SampleData.swift in Sources */,
 				47E2E6D363BB6803F7585811 /* Coffee+Visuals.swift in Sources */,
 				BDCE84500CE35E8859D39167 /* Coffee.swift in Sources */,
 				4E1E4BB7C3B9C43F42F413CD /* CoffeeGridCard.swift in Sources */,
