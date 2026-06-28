@@ -15,7 +15,17 @@ TOOL_NAME = "extract_coffee_label"
 EXTRACTION_SCHEMA = {
     "type": "object",
     "properties": {
-        "roaster": {"type": ["string", "null"]},
+        "roaster": {
+            "type": ["string", "null"],
+            "description": (
+                "The roasting company / brand that produced the bag. This is "
+                "often NOT on the descriptive label with the coffee name and "
+                "origin -- it's frequently the brand's logo or wordmark printed "
+                "large elsewhere on the bag (e.g. down the side, sometimes "
+                "rotated/vertical, or across the front). Read that brand mark "
+                "as the roaster, distinct from the coffeeName."
+            ),
+        },
         "coffeeName": {"type": ["string", "null"]},
         "originCountry": {"type": ["string", "null"]},
         "originRegion": {"type": ["string", "null"]},
@@ -106,7 +116,13 @@ def handler(event, context):
                         {
                             "text": (
                                 "Extract the coffee details visible on this roasted "
-                                "coffee bag label using the extract_coffee_label tool."
+                                "coffee bag using the extract_coffee_label tool. Look "
+                                "at the ENTIRE bag, not just the descriptive label: the "
+                                "roaster's brand name is often a large logo or wordmark "
+                                "printed elsewhere on the bag (down the side, possibly "
+                                "rotated/vertical, or across the front) rather than on "
+                                "the label with the coffee name and origin. Be sure to "
+                                "capture that brand mark as the roaster."
                             )
                         },
                     ],
