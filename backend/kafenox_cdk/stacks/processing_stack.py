@@ -91,6 +91,21 @@ class ProcessingStack(Stack):
                 ],
             )
         )
+        # Newer Bedrock models (e.g. Claude Sonnet 4.6) are gated behind an
+        # AWS Marketplace subscription. Without an account-level model-access
+        # grant, Converse fails with AccessDeniedException naming these
+        # actions; granting them lets the function self-subscribe to the model
+        # on first invocation. These marketplace actions don't support
+        # resource-level scoping, hence "*".
+        extract_fn.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "aws-marketplace:Subscribe",
+                    "aws-marketplace:ViewSubscriptions",
+                ],
+                resources=["*"],
+            )
+        )
 
         persist_fn = lambda_.Function(
             self,
