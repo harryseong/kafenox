@@ -54,7 +54,6 @@
 		4286B8115318769EDA0B4455 /* Coffee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coffee.swift; sourceTree = "<group>"; };
 		45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModel.swift; sourceTree = "<group>"; };
 		654C2AF915808DC603B31092 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		740EE22BFAAD40D044762913 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7E8A1414A2C4694BE03B6C76 /* ScanCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCameraView.swift; sourceTree = "<group>"; };
 		7FD6F67E6C4B12E1AE2D5253 /* CoffeeGridCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoffeeGridCard.swift; sourceTree = "<group>"; };
 		84024E78D9D7DC86EE721740 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
@@ -145,7 +144,6 @@
 			isa = PBXGroup;
 			children = (
 				FB56438A16343774D35E158D /* Assets.xcassets */,
-				740EE22BFAAD40D044762913 /* Info.plist */,
 				27EBEC08D6F40323BDC9B148 /* KafenoxApp.swift */,
 				AB44F56252D842875E57156A /* Models */,
 				FE152AA1629316583DEFA086 /* Networking */,
@@ -343,8 +341,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Kafenox/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -364,8 +360,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Kafenox/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
