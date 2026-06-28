@@ -12,7 +12,7 @@ def _synth():
         app,
         "TestProcessing",
         env_name="test",
-        bedrock_model_id="apac.anthropic.claude-sonnet-4-5-20250929-v1:0",
+        bedrock_model_id="global.anthropic.claude-sonnet-4-6",
         raw_bucket=storage.raw_bucket,
         processed_bucket=storage.processed_bucket,
         coffee_table=storage.coffee_table,
