@@ -26,12 +26,31 @@ EXTRACTION_SCHEMA = {
         "roastLevel": {
             "type": "string",
             "enum": ["light", "medium-light", "medium", "medium-dark", "dark", "unknown"],
+            "description": (
+                "Your own visual judgment of the roast based on the bean/label "
+                "color, not a transcription of label text. Labels frequently "
+                "print a brew-method roast name (e.g. 'Espresso Roast') instead "
+                "of a light/dark description -- that belongs in roastType, not here."
+            ),
+        },
+        "roastType": {
+            "type": "string",
+            "enum": ["espresso", "filter", "drip", "other", "unknown"],
+            "description": (
+                "The brew-method roast name as printed on the label, if any "
+                "(e.g. 'Espresso Roast' -> espresso). 'unknown' if the label "
+                "doesn't state one."
+            ),
         },
         "process": {
             "type": "string",
             "enum": ["washed", "natural", "honey", "anaerobic", "other", "unknown"],
         },
         "variety": {"type": ["string", "null"]},
+        "producer": {
+            "type": ["string", "null"],
+            "description": "Farm, producer name, or co-op as printed on the label, e.g. 'Teodoro Engelhardt' or 'Various smallholder producers'.",
+        },
         "flavorNotes": {"type": "array", "items": {"type": "string"}},
         "altitude": {
             "type": ["string", "null"],

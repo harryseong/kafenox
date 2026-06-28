@@ -161,6 +161,12 @@ struct DetailView: View {
             specCard(label: "ORIGIN", palette: palette) {
                 Text(coffee.originCountry ?? "—").font(.hanken(15, weight: 700)).foregroundStyle(palette.fg)
             }
+            specCard(label: "ROAST TYPE", palette: palette) {
+                Text(coffee.roastType?.capitalized ?? "—").font(.hanken(15, weight: 700)).foregroundStyle(palette.fg)
+            }
+            specCard(label: "PRODUCER", palette: palette) {
+                Text(coffee.producer ?? "—").font(.hanken(15, weight: 700)).foregroundStyle(palette.fg)
+            }
         }
         .padding(.top, 24)
     }

@@ -34,6 +34,7 @@ struct ReviewView: View {
                         field("Process", text: $viewModel.draftProcess, palette: palette)
                         field("Variety", text: $viewModel.draftVariety, palette: palette)
                     }
+                    field("Producer", text: $viewModel.draftProducer, palette: palette)
                     if let flavors = viewModel.original?.flavorNotes, !flavors.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("FLAVOR NOTES")

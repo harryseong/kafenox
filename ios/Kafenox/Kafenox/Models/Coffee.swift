@@ -16,8 +16,10 @@ struct Coffee: Codable, Identifiable, Hashable {
     var originRegion: String?
     var roastDate: String?
     var roastLevel: String?
+    var roastType: String? = nil
     var process: String?
     var variety: String?
+    var producer: String? = nil
     var flavorNotes: [String]
     var altitude: String?
 

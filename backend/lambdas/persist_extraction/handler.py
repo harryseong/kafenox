@@ -52,8 +52,10 @@ def handler(event, context):
         item.originRegion = extracted.get("originRegion")
         item.roastDate = extracted.get("roastDate")
         item.roastLevel = extracted.get("roastLevel")
+        item.roastType = extracted.get("roastType")
         item.process = extracted.get("process")
         item.variety = extracted.get("variety")
+        item.producer = extracted.get("producer")
         item.flavorNotes = extracted.get("flavorNotes", [])
         item.altitude = extracted.get("altitude")
         item.lat = lat

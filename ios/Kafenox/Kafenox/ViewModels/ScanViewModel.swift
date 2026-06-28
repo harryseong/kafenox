@@ -29,6 +29,7 @@ final class ScanViewModel {
     var draftRegion = ""
     var draftProcess = ""
     var draftVariety = ""
+    var draftProducer = ""
 
     private var pollTask: Task<Void, Never>?
 
@@ -99,6 +100,7 @@ final class ScanViewModel {
         draftRegion = coffee.originRegion ?? ""
         draftProcess = coffee.process ?? ""
         draftVariety = coffee.variety ?? ""
+        draftProducer = coffee.producer ?? ""
     }
 
     @MainActor
@@ -124,6 +126,7 @@ final class ScanViewModel {
         if draftRegion != (original.originRegion ?? "") { changed["originRegion"] = draftRegion }
         if draftProcess != (original.process ?? "") { changed["process"] = draftProcess }
         if draftVariety != (original.variety ?? "") { changed["variety"] = draftVariety }
+        if draftProducer != (original.producer ?? "") { changed["producer"] = draftProducer }
 
         guard !changed.isEmpty else { return original }
         return try await APIClient.shared.updateCoffee(photoId: photoId, fields: changed)

@@ -28,8 +28,10 @@ class CoffeeModel(Model):
     originRegion = UnicodeAttribute(null=True)
     roastDate = UnicodeAttribute(null=True)
     roastLevel = UnicodeAttribute(null=True)
+    roastType = UnicodeAttribute(null=True)
     process = UnicodeAttribute(null=True)
     variety = UnicodeAttribute(null=True)
+    producer = UnicodeAttribute(null=True)
     flavorNotes = ListAttribute(of=UnicodeAttribute, default=list, null=True)
     altitude = UnicodeAttribute(null=True)
 
