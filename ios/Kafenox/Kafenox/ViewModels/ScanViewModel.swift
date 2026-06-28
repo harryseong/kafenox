@@ -87,8 +87,20 @@ final class ScanViewModel {
             step = .failed(message: "That's taking longer than expected.")
         } catch is CancellationError {
             // view was dismissed mid-flow, nothing to surface
+        } catch let error as APIError {
+            // Surface the specific failure so config issues (e.g. a 403 from a
+            // missing API key) are diagnosable on-device rather than hidden
+            // behind a generic message.
+            print("Scan upload failed: \(error)")
+            switch error {
+            case .server(let statusCode):
+                step = .failed(message: "Upload failed (HTTP \(statusCode)).")
+            case .decoding:
+                step = .failed(message: "Couldn't read the server's response.")
+            }
         } catch {
-            step = .failed(message: "Something went wrong uploading that photo.")
+            print("Scan upload failed: \(error)")
+            step = .failed(message: "Something went wrong uploading that photo. (\(error.localizedDescription))")
         }
     }
 

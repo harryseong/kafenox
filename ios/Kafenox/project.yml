@@ -28,6 +28,16 @@ targets:
       properties:
         UILaunchScreen: {}
         NSCameraUsageDescription: "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically."
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         UIAppFonts:
           - HankenGrotesk-Variable.ttf
           - DMMono-Regular.ttf

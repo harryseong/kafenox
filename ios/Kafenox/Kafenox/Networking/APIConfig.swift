@@ -18,7 +18,7 @@ enum APIConfig {
     /// Release/App Store build regardless of this constant's value, since
     /// DEBUG is never defined in Release configurations.
     #if DEBUG
-    static let useMockData = true
+    static let useMockData = false
     #else
     static let useMockData = false
     #endif
