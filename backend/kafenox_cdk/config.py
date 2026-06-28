@@ -20,7 +20,7 @@ def get_config() -> Config:
     # new Claude versions ship.
     bedrock_model_id = os.environ.get(
         "KAFENOX_BEDROCK_MODEL_ID",
-        "apac.anthropic.claude-sonnet-4-5-20250929-v1:0",
+        "apac.anthropic.claude-sonnet-4-20250514-v1:0",
     )
     return Config(
         env_name=env_name,

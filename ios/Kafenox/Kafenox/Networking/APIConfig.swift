@@ -5,7 +5,7 @@ import Foundation
 /// stage URL) -- swap to an Info.plist/xcconfig-driven value per scheme if
 /// dev/prod stages diverge.
 enum APIConfig {
-    static let baseURL = URL(string: "https://CHANGEME.execute-api.ap-southeast-1.amazonaws.com/dev")!
+    static let baseURL = URL(string: "https://ivtb3d1a1f.execute-api.ap-southeast-1.amazonaws.com/dev")!
 
     static var apiKey: String {
         KeychainStore.get() ?? ""
