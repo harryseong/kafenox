@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum Tab { case catalog, map }
+enum Tab { case catalog, insights }
 
 struct KafenoxTabBar: View {
     let palette: Palette
@@ -31,7 +31,7 @@ struct KafenoxTabBar: View {
             }
             .buttonStyle(.plain)
 
-            tabButton(tab: .map, systemImage: "globe.americas.fill", label: "Map")
+            tabButton(tab: .insights, systemImage: "globe.americas.fill", label: "Insights")
         }
         .padding(.horizontal, 32)
         .padding(.top, 11)

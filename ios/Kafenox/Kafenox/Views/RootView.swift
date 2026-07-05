@@ -5,7 +5,7 @@ struct RootView: View {
     @State private var catalogViewModel = CatalogViewModel()
     @State private var activeTab: Tab = .catalog
     @State private var catalogPath = NavigationPath()
-    @State private var mapPath = NavigationPath()
+    @State private var insightsPath = NavigationPath()
     @State private var isScanPresented = false
     @State private var scanViewModel = ScanViewModel()
 
@@ -18,9 +18,9 @@ struct RootView: View {
                     NavigationStack(path: $catalogPath) {
                         CatalogView(viewModel: catalogViewModel)
                     }
-                case .map:
-                    NavigationStack(path: $mapPath) {
-                        OriginsMapView(viewModel: MapViewModel(catalog: catalogViewModel))
+                case .insights:
+                    NavigationStack(path: $insightsPath) {
+                        InsightsView(viewModel: InsightsViewModel(catalog: catalogViewModel))
                     }
                 }
             }
