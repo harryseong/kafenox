@@ -3,6 +3,7 @@ import os
 import boto3
 from aws_lambda_powertools import Logger, Tracer
 from jsonschema import ValidationError, validate
+from kafenox_common.flavor_families import categorize_flavor_notes
 
 logger = Logger()
 tracer = Tracer()
@@ -145,6 +146,18 @@ def handler(event, context):
         validate(instance=extracted, schema=EXTRACTION_SCHEMA)
     except (KeyError, StopIteration, ValidationError) as exc:
         raise ExtractionFailedError(f"Malformed Bedrock tool-use response: {exc}") from exc
+
+    # Categorization failures must never fail a scan -- the app falls back to
+    # its client-side note->family lookup when families are absent.
+    try:
+        extracted["flavorFamilies"] = categorize_flavor_notes(
+            extracted.get("flavorNotes") or [], model_id
+        )
+    except Exception as exc:
+        logger.warning(
+            "Flavor-family categorization failed", photo_id=photo_id, error=str(exc)
+        )
+        extracted["flavorFamilies"] = {}
 
     logger.info("Extracted coffee data", photo_id=photo_id)
     return {"photoId": photo_id, "extracted": extracted}

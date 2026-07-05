@@ -3,6 +3,7 @@ import os
 from pynamodb.attributes import (
     BooleanAttribute,
     ListAttribute,
+    MapAttribute,
     NumberAttribute,
     UnicodeAttribute,
 )
@@ -33,6 +34,8 @@ class CoffeeModel(Model):
     variety = UnicodeAttribute(null=True)
     producer = UnicodeAttribute(null=True)
     flavorNotes = ListAttribute(of=UnicodeAttribute, default=list, null=True)
+    # note -> flavor family name (see kafenox_common.flavor_families)
+    flavorFamilies = MapAttribute(null=True)
     altitude = UnicodeAttribute(null=True)
 
     lat = NumberAttribute(null=True)
@@ -42,4 +45,8 @@ class CoffeeModel(Model):
     isVerified = BooleanAttribute(default=False)
 
     def to_dict(self) -> dict:
-        return dict(self.attribute_values)
+        values = dict(self.attribute_values)
+        families = values.get("flavorFamilies")
+        if isinstance(families, MapAttribute):
+            values["flavorFamilies"] = families.as_dict()
+        return values

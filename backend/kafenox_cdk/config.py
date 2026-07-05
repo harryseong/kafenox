@@ -8,6 +8,7 @@ class Config:
     account: str | None
     region: str
     bedrock_model_id: str
+    insights_model_id: str
 
 
 def get_config() -> Config:
@@ -30,9 +31,17 @@ def get_config() -> Config:
         "KAFENOX_BEDROCK_MODEL_ID",
         "global.anthropic.claude-haiku-4-5-20251001-v1:0",
     )
+    # Ask-AI insights endpoint. Sonnet over Haiku for answer quality on
+    # open-ended questions about the collection; same global cross-region
+    # inference profile scheme as bedrock_model_id above.
+    insights_model_id = os.environ.get(
+        "KAFENOX_INSIGHTS_MODEL_ID",
+        "global.anthropic.claude-sonnet-4-6",
+    )
     return Config(
         env_name=env_name,
         account=account,
         region=region,
         bedrock_model_id=bedrock_model_id,
+        insights_model_id=insights_model_id,
     )

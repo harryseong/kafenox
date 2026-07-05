@@ -16,6 +16,16 @@ final class InsightsViewModel {
         self.catalog = catalog
     }
 
+    /// Insights derives everything from the catalog, which normally loads
+    /// when the Collection tab appears -- but the user can land on Insights
+    /// first, so kick the load from here too.
+    @MainActor
+    func loadIfNeeded() async {
+        if catalog.coffees.isEmpty {
+            await catalog.load()
+        }
+    }
+
     // MARK: Origins
 
     var origins: [OriginStat] {
@@ -47,12 +57,23 @@ final class InsightsViewModel {
     // MARK: Flavors
 
     /// One entry per distinct note, counting how many coffees carry it.
+    /// Family comes from the backend's Claude categorization when present,
+    /// falling back to the client-side note lookup for older items.
     var flavorNoteStats: [FlavorNoteStat] {
         var counts: [String: Int] = [:]
+        var backendFamilies: [String: String] = [:]
         for coffee in catalog.coffees {
-            for note in coffee.flavorNotes { counts[note, default: 0] += 1 }
+            for note in coffee.flavorNotes {
+                counts[note, default: 0] += 1
+                if backendFamilies[note] == nil, let family = coffee.flavorFamilies?[note] {
+                    backendFamilies[note] = family
+                }
+            }
         }
-        return counts.map { FlavorNoteStat(note: $0.key, count: $0.value, family: FlavorFamily.of($0.key)) }
+        return counts.map { note, count in
+            let family = backendFamilies[note].flatMap(FlavorFamily.named) ?? FlavorFamily.of(note)
+            return FlavorNoteStat(note: note, count: count, family: family)
+        }
     }
 
     /// Notes ranked most-common first, ties broken alphabetically.
@@ -86,4 +107,59 @@ final class InsightsViewModel {
     var flavorMetaLine: String {
         "\(flavorNoteStats.count) distinct notes across \(catalog.coffees.count) coffees"
     }
+
+    // MARK: Timeline
+
+    /// Coffees grouped by the month they were logged, newest month first.
+    var timelineGroups: [TimelineGroup] {
+        let calendar = Calendar.current
+        var byMonth: [Date: [Coffee]] = [:]
+        for coffee in catalog.coffees {
+            guard let date = Self.loggedDate(of: coffee) else { continue }
+            let month = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
+            byMonth[month, default: []].append(coffee)
+        }
+        return byMonth
+            .sorted { $0.key > $1.key }
+            .map { month, coffees in
+                TimelineGroup(
+                    monthStart: month,
+                    label: month.formatted(.dateTime.month(.wide).year()),
+                    coffees: coffees.sorted {
+                        (Self.loggedDate(of: $0) ?? .distantPast) > (Self.loggedDate(of: $1) ?? .distantPast)
+                    }
+                )
+            }
+    }
+
+    var timelineMetaLine: String {
+        "\(catalog.coffees.count) coffees over \(timelineGroups.count) months"
+    }
+
+    var askMetaLine: String {
+        "Grounded in \(catalog.coffees.count) logged coffees"
+    }
+
+    /// The backend writes Python `datetime.isoformat()` ("+00:00" offset,
+    /// microsecond fractions); older/other writers may use "Z" or no
+    /// fraction. FormatStyles are Sendable value types, unlike the Formatter
+    /// classes, so these are safe as statics under Swift 6 concurrency.
+    private static let isoParsers: [Date.ISO8601FormatStyle] = [
+        .init(timeZoneSeparator: .colon, includingFractionalSeconds: true),
+        .init(timeZoneSeparator: .colon),
+        .init(includingFractionalSeconds: true),
+        .init(),
+    ]
+
+    private static func loggedDate(of coffee: Coffee) -> Date? {
+        guard let raw = coffee.createdAt else { return nil }
+        return isoParsers.lazy.compactMap { try? $0.parse(raw) }.first
+    }
+}
+
+struct TimelineGroup: Identifiable {
+    let monthStart: Date
+    let label: String
+    let coffees: [Coffee]
+    var id: Date { monthStart }
 }

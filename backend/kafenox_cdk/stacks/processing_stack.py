@@ -80,6 +80,9 @@ class ProcessingStack(Stack):
                 "BEDROCK_MODEL_ID": bedrock_model_id,
                 **POWERTOOLS_ENV,
             },
+            # kafenox_common.flavor_families is used to categorize the
+            # extracted flavor notes.
+            layers=[common_layer],
         )
         processed_bucket.grant_read(extract_fn)
         extract_fn.add_to_role_policy(

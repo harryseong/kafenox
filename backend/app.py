@@ -36,6 +36,8 @@ api = ApiStack(
     coffee_table=storage.coffee_table,
     raw_bucket=storage.raw_bucket,
     processed_bucket=storage.processed_bucket,
+    bedrock_model_id=config.bedrock_model_id,
+    insights_model_id=config.insights_model_id,
     env=env,
 )
 

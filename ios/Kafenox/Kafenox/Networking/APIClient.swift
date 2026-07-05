@@ -111,4 +111,20 @@ actor APIClient {
     func deleteCoffee(photoId: String) async throws {
         _ = try await request("coffees/\(photoId)", method: "DELETE")
     }
+
+    /// POST /insights/ask -- Claude-backed Q&A over the user's collection.
+    func askInsights(question: String, history: [(role: String, text: String)]) async throws -> String {
+        struct Response: Decodable { let answer: String }
+        let payload: [String: Any] = [
+            "question": question,
+            "history": history.map { ["role": $0.role, "text": $0.text] },
+        ]
+        let body = try JSONSerialization.data(withJSONObject: payload)
+        let data = try await request("insights/ask", method: "POST", body: body)
+        do {
+            return try decoder.decode(Response.self, from: data).answer
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
 }

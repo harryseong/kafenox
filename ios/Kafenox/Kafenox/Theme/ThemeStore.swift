@@ -12,10 +12,12 @@ final class ThemeStore {
 
     init() {
         let stored = UserDefaults.standard.string(forKey: Self.storageKey)
-        theme = stored.flatMap(Theme.init(rawValue:)) ?? .warm
+        // Values persisted by the retired 3-theme system ("warm"/"minimal")
+        // fall through to light; "dark" still parses.
+        theme = stored.flatMap(Theme.init(rawValue:)) ?? .light
     }
 
-    func cycle() {
-        theme = theme.next()
+    func toggle() {
+        theme = theme.toggled()
     }
 }

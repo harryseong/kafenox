@@ -1,6 +1,8 @@
 import json
+import os
 
 from aws_lambda_powertools import Logger, Tracer
+from kafenox_common.flavor_families import categorize_flavor_notes
 from kafenox_common.models import CoffeeModel
 from kafenox_common.origin_geocode import geocode_origin
 
@@ -24,6 +26,23 @@ EDITABLE_FIELDS = {
 }
 
 
+def _families_for(item: CoffeeModel, notes: list) -> dict | None:
+    """Keep existing note->family assignments; categorize only new notes.
+    A categorization failure leaves the new notes unmapped (the app falls
+    back to its client-side lookup) rather than failing the edit."""
+    existing = item.to_dict().get("flavorFamilies") or {}
+    families = {n: existing[n] for n in notes if n in existing}
+    new_notes = [n for n in notes if n not in existing]
+    if new_notes:
+        try:
+            families.update(
+                categorize_flavor_notes(new_notes, os.environ["BEDROCK_MODEL_ID"])
+            )
+        except Exception as exc:
+            logger.warning("Flavor-family categorization failed", error=str(exc))
+    return families or None
+
+
 @logger.inject_lambda_context(log_event=False)
 @tracer.capture_lambda_handler
 def handler(event, context):
@@ -44,6 +63,9 @@ def handler(event, context):
         country = updates.get("originCountry", item.originCountry)
         region = updates.get("originRegion", item.originRegion)
         updates["lat"], updates["lng"] = geocode_origin(country, region)
+
+    if "flavorNotes" in updates:
+        updates["flavorFamilies"] = _families_for(item, updates["flavorNotes"] or [])
 
     # Any manual field edit (other than just setting a rating) marks the
     # item as human-verified.
