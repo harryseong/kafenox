@@ -21,9 +21,14 @@ def get_config() -> Config:
     # `aws bedrock list-inference-profiles` for the target account before
     # deploying -- AWS adds new profile ids as new Claude versions ship.
     # Validated ACTIVE in account 552566233886/ap-southeast-1 on 2026-06-28.
+    #
+    # Currently on Claude Haiku 4.5 -- trialing it for lower extraction
+    # latency. Previously used Claude Sonnet 4.6 (kept below to toggle back if
+    # Haiku's extraction accuracy proves insufficient):
+    #     "global.anthropic.claude-sonnet-4-6"
     bedrock_model_id = os.environ.get(
         "KAFENOX_BEDROCK_MODEL_ID",
-        "global.anthropic.claude-sonnet-4-6",
+        "global.anthropic.claude-haiku-4-5-20251001-v1:0",
     )
     return Config(
         env_name=env_name,
