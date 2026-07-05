@@ -110,26 +110,41 @@ final class InsightsViewModel {
 
     // MARK: Timeline
 
-    /// Coffees grouped by the month they were logged, newest month first.
+    /// Coffees grouped by the month they were roasted, newest month first.
     var timelineGroups: [TimelineGroup] {
         let calendar = Calendar.current
-        var byMonth: [Date: [Coffee]] = [:]
+        var byMonth: [Date: [(date: Date, coffee: Coffee)]] = [:]
         for coffee in catalog.coffees {
-            guard let date = Self.loggedDate(of: coffee) else { continue }
+            guard let date = Self.timelineDate(of: coffee) else { continue }
             let month = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
-            byMonth[month, default: []].append(coffee)
+            byMonth[month, default: []].append((date, coffee))
         }
         return byMonth
             .sorted { $0.key > $1.key }
-            .map { month, coffees in
+            .map { month, entries in
                 TimelineGroup(
                     monthStart: month,
                     label: month.formatted(.dateTime.month(.wide).year()),
-                    coffees: coffees.sorted {
-                        (Self.loggedDate(of: $0) ?? .distantPast) > (Self.loggedDate(of: $1) ?? .distantPast)
-                    }
+                    coffees: entries.sorted { $0.date > $1.date }.map(\.coffee)
                 )
             }
+    }
+
+    /// Timeline entries are ordered by roast date ("YYYY-MM" or "YYYY-MM-DD"
+    /// per the extraction schema), falling back to the logged date for
+    /// coffees whose label carried no roast date.
+    private static func timelineDate(of coffee: Coffee) -> Date? {
+        if let raw = coffee.roastDate {
+            let parts = raw.split(separator: "-")
+            if parts.count >= 2, let year = Int(parts[0]), let month = Int(parts[1]),
+               (1...12).contains(month) {
+                let day = parts.count >= 3 ? Int(parts[2]) : nil
+                if let date = Calendar.current.date(from: DateComponents(year: year, month: month, day: day ?? 1)) {
+                    return date
+                }
+            }
+        }
+        return loggedDate(of: coffee)
     }
 
     var timelineMetaLine: String {

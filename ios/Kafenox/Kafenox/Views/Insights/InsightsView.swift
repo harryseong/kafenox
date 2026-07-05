@@ -56,6 +56,10 @@ struct InsightsView: View {
             }
         }
         .background(palette.bg)
+        // The Map on the Origins tab makes the NavigationStack show its
+        // (empty) navigation bar, pushing that tab's content down relative to
+        // the others. Every tab draws its own header, so hide the bar.
+        .toolbar(.hidden, for: .navigationBar)
         .task { await viewModel.loadIfNeeded() }
     }
 
