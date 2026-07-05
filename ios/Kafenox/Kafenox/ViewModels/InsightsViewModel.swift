@@ -110,24 +110,40 @@ final class InsightsViewModel {
 
     // MARK: Timeline
 
-    /// Coffees grouped by the month they were roasted, newest month first.
+    /// Coffees grouped by the month they were roasted, newest month first;
+    /// within a month, best-rated first (per the v3 design).
     var timelineGroups: [TimelineGroup] {
         let calendar = Calendar.current
-        var byMonth: [Date: [(date: Date, coffee: Coffee)]] = [:]
+        var byMonth: [Date: [Coffee]] = [:]
         for coffee in catalog.coffees {
             guard let date = Self.timelineDate(of: coffee) else { continue }
             let month = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
-            byMonth[month, default: []].append((date, coffee))
+            byMonth[month, default: []].append(coffee)
         }
         return byMonth
             .sorted { $0.key > $1.key }
-            .map { month, entries in
+            .map { month, coffees in
                 TimelineGroup(
                     monthStart: month,
                     label: month.formatted(.dateTime.month(.wide).year()),
-                    coffees: entries.sorted { $0.date > $1.date }.map(\.coffee)
+                    agoLabel: Self.agoLabel(for: month, calendar: calendar),
+                    coffees: coffees.sorted { ($0.rating ?? -1) > ($1.rating ?? -1) }
                 )
             }
+    }
+
+    /// "this month" / "1 mo ago" / "N mo ago", matching the design's rail
+    /// header.
+    private static func agoLabel(for month: Date, calendar: Calendar) -> String {
+        let now = calendar.dateComponents([.year, .month], from: Date())
+        let then = calendar.dateComponents([.year, .month], from: month)
+        guard let ny = now.year, let nm = now.month, let ty = then.year, let tm = then.month else { return "" }
+        let delta = (ny * 12 + nm) - (ty * 12 + tm)
+        switch delta {
+        case ...0: return "this month"
+        case 1: return "1 mo ago"
+        default: return "\(delta) mo ago"
+        }
     }
 
     /// Timeline entries are ordered by roast date ("YYYY-MM" or "YYYY-MM-DD"
@@ -148,7 +164,9 @@ final class InsightsViewModel {
     }
 
     var timelineMetaLine: String {
-        "\(catalog.coffees.count) coffees over \(timelineGroups.count) months"
+        let groups = timelineGroups
+        guard let newest = groups.first, let oldest = groups.last else { return "By roast date" }
+        return "By roast date · \(oldest.label) — \(newest.label)"
     }
 
     var askMetaLine: String {
@@ -175,6 +193,7 @@ final class InsightsViewModel {
 struct TimelineGroup: Identifiable {
     let monthStart: Date
     let label: String
+    let agoLabel: String
     let coffees: [Coffee]
     var id: Date { monthStart }
 }

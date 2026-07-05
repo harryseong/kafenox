@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// A fixed-size center dot inside a transparent ring whose diameter scales
+/// with the coffee count, so busy origins don't blot out the map beneath.
 /// Deliberately simple -- no nested scroll/gesture views -- since custom
 /// Annotation content inside MapKit's Map can have tap-through/clipping
 /// quirks if it gets complex.
@@ -8,16 +10,19 @@ struct OriginPin: View {
     let maxCount: Int
     let palette: Palette
 
-    private var diameter: CGFloat {
+    private var ringDiameter: CGFloat {
         let ratio = maxCount > 0 ? CGFloat(count) / CGFloat(maxCount) : 0
-        return 14 + ratio * 22
+        return 16 + ratio * 38
     }
 
     var body: some View {
         Circle()
-            .fill(palette.fg)
-            .frame(width: diameter, height: diameter)
-            .overlay(Circle().stroke(palette.bg, lineWidth: 3))
-            .shadow(color: palette.shadow, radius: 4)
+            .stroke(palette.fg, lineWidth: 1)
+            .frame(width: ringDiameter, height: ringDiameter)
+            .overlay(
+                Circle()
+                    .fill(palette.fg)
+                    .frame(width: 6, height: 6)
+            )
     }
 }

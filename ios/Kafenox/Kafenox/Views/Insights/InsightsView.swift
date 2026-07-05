@@ -123,11 +123,11 @@ struct InsightsView: View {
             .padding(.top, 18)
 
             HStack(spacing: 8) {
-                Circle().fill(palette.fg).frame(width: 8, height: 8)
+                Circle().stroke(palette.muted, lineWidth: 1).frame(width: 8, height: 8)
                 Text("fewer coffees")
                     .font(.app(11, weight: .medium))
                     .foregroundStyle(palette.muted)
-                Circle().fill(palette.fg).frame(width: 15, height: 15).padding(.leading, 4)
+                Circle().stroke(palette.muted, lineWidth: 1).frame(width: 15, height: 15).padding(.leading, 4)
                 Text("more coffees")
                     .font(.app(11, weight: .medium))
                     .foregroundStyle(palette.muted)
