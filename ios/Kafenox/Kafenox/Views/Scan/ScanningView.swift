@@ -9,15 +9,14 @@ struct ScanningView: View {
     @State private var spin = false
 
     var body: some View {
-        let palette = themeStore.palette
         ZStack {
-            Color(hex: 0x0c0b0b).ignoresSafeArea()
+            Color(hex: 0x0c0c0c).ignoresSafeArea()
 
             VStack(spacing: 0) {
                 if case .failed(let message) = viewModel.step {
-                    failedState(message: message, palette: palette)
+                    failedState(message: message)
                 } else {
-                    scanningState(palette: palette)
+                    scanningState
                 }
             }
             .padding(24)
@@ -32,11 +31,11 @@ struct ScanningView: View {
         }
     }
 
-    private func scanningState(palette: Palette) -> some View {
+    private var scanningState: some View {
         VStack(spacing: 24) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(hex: 0x2a2522))
+                    .fill(Color(hex: 0x1f1f1f))
                     .frame(width: 150, height: 203)
                 if let image = viewModel.capturedImage {
                     Image(uiImage: image)
@@ -48,11 +47,11 @@ struct ScanningView: View {
                 }
                 Rectangle()
                     .fill(
-                        LinearGradient(colors: [.clear, palette.accent, .clear], startPoint: .leading, endPoint: .trailing)
+                        LinearGradient(colors: [.clear, .white, .clear], startPoint: .leading, endPoint: .trailing)
                     )
                     .frame(width: 150, height: 3)
                     .offset(y: sweepUp ? 100 : -100)
-                    .shadow(color: palette.accent, radius: 8)
+                    .shadow(color: .white.opacity(0.8), radius: 7)
             }
             .padding(.top, 14)
 
@@ -63,50 +62,52 @@ struct ScanningView: View {
                     .overlay(
                         Circle()
                             .trim(from: 0, to: 0.25)
-                            .stroke(palette.accent, lineWidth: 2.5)
+                            .stroke(.white, lineWidth: 2.5)
                             .frame(width: 18, height: 18)
                             .rotationEffect(.degrees(spin ? 360 : 0))
                     )
                 Text("Reading label with AI")
-                    .font(.hanken(16, weight: 700))
+                    .font(.app(16, weight: .semibold))
                     .foregroundStyle(.white)
             }
 
             Text("Extracting details from the label")
-                .font(.hanken(12.5))
+                .font(.app(12.5))
                 .foregroundStyle(.white.opacity(0.45))
 
             Spacer()
         }
     }
 
-    private func failedState(message: String, palette: Palette) -> some View {
+    private func failedState(message: String) -> some View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 32))
-                .foregroundStyle(palette.accent)
+                .foregroundStyle(Palette.error)
             Text(message)
-                .font(.hanken(16, weight: 700))
+                .font(.app(16, weight: .semibold))
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
             Button {
                 viewModel.retake()
             } label: {
                 Text("Try again")
-                    .font(.hanken(15, weight: 700))
-                    .foregroundStyle(palette.onAccent)
+                    .font(.app(14.5, weight: .semibold))
+                    .foregroundStyle(Color(hex: 0x0c0c0c))
                     .frame(maxWidth: .infinity)
-                    .frame(height: 52)
-                    .background(palette.accent, in: RoundedRectangle(cornerRadius: 15))
+                    .frame(height: 48)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 14))
             }
+            .buttonStyle(.plain)
             Button {
                 onClose()
             } label: {
                 Text("Cancel")
-                    .font(.hanken(14, weight: 600))
+                    .font(.app(14, weight: .medium))
                     .foregroundStyle(.white.opacity(0.6))
             }
+            .buttonStyle(.plain)
             .padding(.top, 4)
             Spacer()
         }

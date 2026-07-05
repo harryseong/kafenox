@@ -11,7 +11,11 @@ struct RootView: View {
 
     var body: some View {
         let palette = themeStore.palette
-        ZStack(alignment: .bottom) {
+        // The tab bar is opaque, so stack it below the content instead of
+        // overlaying it -- content (and safe-area-inset composers like Ask
+        // AI's) is then genuinely bounded above the bar. A safeAreaInset on
+        // this Group doesn't reliably propagate into the NavigationStacks.
+        VStack(spacing: 0) {
             Group {
                 switch activeTab {
                 case .catalog:
@@ -23,9 +27,6 @@ struct RootView: View {
                         InsightsView(viewModel: InsightsViewModel(catalog: catalogViewModel))
                     }
                 }
-            }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 88)
             }
 
             KafenoxTabBar(palette: palette, activeTab: $activeTab) {

@@ -37,9 +37,10 @@ struct ScanFlowView: View {
     private var closeButton: some View {
         Button(action: onClose) {
             Image(systemName: "xmark")
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
-                .background(Color.black.opacity(0.25), in: Circle())
+                .overlay(Circle().stroke(Color.white.opacity(0.22), lineWidth: 1))
         }
         .padding(.top, 14)
         .padding(.leading, 16)

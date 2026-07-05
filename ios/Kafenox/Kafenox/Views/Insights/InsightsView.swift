@@ -8,10 +8,13 @@ struct InsightsView: View {
     enum Section: String, CaseIterable, Identifiable {
         case origins = "Origins"
         case flavors = "Flavors"
+        case timeline = "Timeline"
+        case askAI = "Ask AI"
         var id: String { rawValue }
     }
 
     @State private var section: Section = .origins
+    @State private var askViewModel = AskAIViewModel()
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 10, longitude: 20),
                             span: MKCoordinateSpan(latitudeDelta: 140, longitudeDelta: 140))
@@ -19,53 +22,84 @@ struct InsightsView: View {
 
     var body: some View {
         let palette = themeStore.palette
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(section.rawValue)
-                    .font(.hanken(30, weight: 800))
-                    .foregroundStyle(palette.fg)
-                Text(section == .origins ? viewModel.originMetaLine : viewModel.flavorMetaLine)
-                    .font(.dmMono(11))
-                    .foregroundStyle(palette.muted)
-                    .padding(.top, 7)
-
-                segmentedControl(palette: palette)
-
-                switch section {
-                case .origins:
-                    originsContent(palette: palette)
-                case .flavors:
-                    FlavorsInsightView(viewModel: viewModel, palette: palette)
+        Group {
+            if section == .askAI {
+                // The chat manages its own scrolling and pins the composer at
+                // the bottom, so its header stays fixed instead of scrolling.
+                VStack(alignment: .leading, spacing: 0) {
+                    header(palette: palette)
+                    tabPills(palette: palette)
+                    AskAIView(viewModel: askViewModel, palette: palette)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 6)
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        header(palette: palette)
+                        tabPills(palette: palette)
+                        switch section {
+                        case .origins:
+                            originsContent(palette: palette)
+                        case .flavors:
+                            FlavorsInsightView(viewModel: viewModel, palette: palette)
+                        case .timeline:
+                            TimelineInsightView(groups: viewModel.timelineGroups, palette: palette)
+                        case .askAI:
+                            EmptyView()
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 6)
+                    .padding(.bottom, 40)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 6)
-            .padding(.bottom, 120)
         }
         .background(palette.bg)
+        .task { await viewModel.loadIfNeeded() }
     }
 
-    private func segmentedControl(palette: Palette) -> some View {
-        HStack(spacing: 4) {
-            ForEach(Section.allCases) { item in
-                let active = section == item
-                Button {
-                    section = item
-                } label: {
-                    Text(item.rawValue)
-                        .font(.hanken(13.5, weight: 700))
-                        .foregroundStyle(active ? palette.fg : palette.muted)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 9)
-                        .background(active ? palette.surface : .clear, in: RoundedRectangle(cornerRadius: 11))
-                        .shadow(color: active ? palette.fg.opacity(0.12) : .clear, radius: 4, y: 1)
+    private var metaLine: String {
+        switch section {
+        case .origins: return viewModel.originMetaLine
+        case .flavors: return viewModel.flavorMetaLine
+        case .timeline: return viewModel.timelineMetaLine
+        case .askAI: return viewModel.askMetaLine
+        }
+    }
+
+    private func header(palette: Palette) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Insights")
+                .font(.app(32, weight: .bold))
+                .tracking(-0.8)
+                .foregroundStyle(palette.fg)
+            Text(metaLine)
+                .font(.app(13, weight: .medium))
+                .foregroundStyle(palette.muted)
+        }
+    }
+
+    private func tabPills(palette: Palette) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 7) {
+                ForEach(Section.allCases) { item in
+                    let active = section == item
+                    Button {
+                        section = item
+                    } label: {
+                        Text(item.rawValue)
+                            .font(.app(13, weight: .semibold))
+                            .foregroundStyle(active ? palette.bg : palette.muted)
+                            .padding(.vertical, 7)
+                            .padding(.horizontal, 15)
+                            .background(active ? palette.fg : palette.surface2, in: Capsule())
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
-        .padding(4)
-        .background(palette.surface2, in: RoundedRectangle(cornerRadius: 15))
-        .padding(.top, 16)
+        .padding(.top, 14)
     }
 
     // MARK: Origins
@@ -85,19 +119,19 @@ struct InsightsView: View {
             .padding(.top, 18)
 
             HStack(spacing: 8) {
-                Circle().fill(palette.accent).frame(width: 8, height: 8)
+                Circle().fill(palette.fg).frame(width: 8, height: 8)
                 Text("fewer coffees")
-                    .font(.dmMono(10))
+                    .font(.app(11, weight: .medium))
                     .foregroundStyle(palette.muted)
-                Circle().fill(palette.accent).frame(width: 15, height: 15).padding(.leading, 4)
+                Circle().fill(palette.fg).frame(width: 15, height: 15).padding(.leading, 4)
                 Text("more coffees")
-                    .font(.dmMono(10))
+                    .font(.app(11, weight: .medium))
                     .foregroundStyle(palette.muted)
             }
             .padding(.top, 12)
 
-            Text("MOST-BREWED ORIGINS")
-                .font(.hanken(13, weight: 700))
+            Text("Most-brewed origins")
+                .font(.app(12, weight: .semibold))
                 .foregroundStyle(palette.muted)
                 .padding(.top, 22)
 
@@ -114,21 +148,22 @@ struct InsightsView: View {
         VStack(spacing: 6) {
             HStack {
                 Text(origin.country)
-                    .font(.hanken(14.5, weight: 700))
+                    .font(.app(14.5, weight: .semibold))
                     .foregroundStyle(palette.fg)
                 Spacer()
                 Text("\(origin.count) \(origin.count == 1 ? "coffee" : "coffees")")
-                    .font(.dmMono(12))
+                    .font(.app(12, weight: .medium))
+                    .monospacedDigit()
                     .foregroundStyle(palette.muted)
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(palette.surface2)
-                    Capsule().fill(palette.accent)
+                    Capsule().fill(palette.fg)
                         .frame(width: geo.size.width * CGFloat(origin.count) / CGFloat(viewModel.maxCount))
                 }
             }
-            .frame(height: 8)
+            .frame(height: 4)
         }
     }
 }

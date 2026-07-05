@@ -21,6 +21,10 @@ struct Coffee: Codable, Identifiable, Hashable {
     var variety: String?
     var producer: String? = nil
     var flavorNotes: [String]
+    /// note -> flavor family name, categorized server-side by Claude at
+    /// extraction/edit time. Absent for coffees that predate categorization;
+    /// the client falls back to `FlavorFamily.of(_:)`.
+    var flavorFamilies: [String: String]? = nil
     var altitude: String?
 
     var lat: Double?

@@ -4,7 +4,7 @@ struct CatalogView: View {
     @Environment(ThemeStore.self) private var themeStore
     let viewModel: CatalogViewModel
 
-    private let gridColumns = [GridItem(.flexible(), spacing: 13), GridItem(.flexible(), spacing: 13)]
+    private let gridColumns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
     var body: some View {
         let palette = themeStore.palette
@@ -17,11 +17,11 @@ struct CatalogView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 6)
-            .padding(.bottom, 120)
+            .padding(.bottom, 40)
         }
         .background(palette.bg)
         .navigationDestination(for: Coffee.self) { coffee in
-            DetailView(viewModel: DetailViewModel(coffee: coffee))
+            DetailView(viewModel: DetailViewModel(coffee: coffee, catalog: viewModel))
         }
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
@@ -29,29 +29,31 @@ struct CatalogView: View {
 
     private func header(palette: Palette) -> some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 7) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text("Collection")
-                    .font(.hanken(30, weight: 800))
+                    .font(.app(32, weight: .bold))
+                    .tracking(-0.8)
                     .foregroundStyle(palette.fg)
                 Text(viewModel.metaLine)
-                    .font(.dmMono(11))
+                    .font(.app(13, weight: .medium))
                     .foregroundStyle(palette.muted)
             }
             Spacer()
             Button {
-                themeStore.cycle()
+                themeStore.toggle()
             } label: {
-                HStack(spacing: 8) {
-                    Circle().fill(palette.accent).frame(width: 13, height: 13)
-                    Text(themeStore.theme.label)
-                        .font(.hanken(12, weight: 600))
-                        .foregroundStyle(palette.fg)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(palette.surface, in: Capsule())
-                .overlay(Capsule().stroke(palette.line, lineWidth: 1))
+                Circle()
+                    .fill(palette.surface)
+                    .frame(width: 36, height: 36)
+                    .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                    .overlay(
+                        Image(systemName: themeStore.theme == .light ? "sun.max" : "moon")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(palette.fg)
+                    )
             }
+            .buttonStyle(.plain)
+            .padding(.top, 3)
         }
     }
 
@@ -59,45 +61,47 @@ struct CatalogView: View {
         HStack(spacing: 10) {
             HStack(spacing: 9) {
                 Image(systemName: "magnifyingglass")
+                    .font(.system(size: 14))
                     .foregroundStyle(palette.muted)
                 TextField("Search flavor, origin, roaster", text: Bindable(viewModel).query)
-                    .font(.hanken(14.5, weight: 500))
+                    .font(.app(14))
                     .foregroundStyle(palette.fg)
             }
             .padding(.horizontal, 13)
-            .frame(height: 46)
-            .background(palette.surface, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).stroke(palette.line, lineWidth: 1))
+            .frame(height: 40)
+            .background(palette.surface2, in: RoundedRectangle(cornerRadius: 12))
 
             Button {
                 viewModel.toggleLayout()
             } label: {
                 Image(systemName: viewModel.layout == .grid ? "square.grid.2x2.fill" : "list.bullet")
+                    .font(.system(size: 15))
                     .foregroundStyle(palette.fg)
-                    .frame(width: 46, height: 46)
-                    .background(palette.surface, in: RoundedRectangle(cornerRadius: 14))
-                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(palette.line, lineWidth: 1))
+                    .frame(width: 40, height: 40)
+                    .background(palette.surface, in: RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.line, lineWidth: 1))
             }
+            .buttonStyle(.plain)
         }
         .padding(.top, 18)
     }
 
     private func chipsRow(palette: Palette) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: 7) {
                 ForEach(viewModel.roastFilters, id: \.self) { filter in
                     let active = viewModel.roastFilter == filter
                     Button {
                         viewModel.roastFilter = filter
                     } label: {
                         Text(filter)
-                            .font(.hanken(13, weight: 600))
+                            .font(.app(13, weight: .semibold))
                             .padding(.horizontal, 15)
-                            .padding(.vertical, 8)
-                            .foregroundStyle(active ? palette.bg : palette.fg)
-                            .background(active ? palette.fg : palette.surface, in: Capsule())
-                            .overlay(Capsule().stroke(active ? .clear : palette.line, lineWidth: 1))
+                            .padding(.vertical, 7)
+                            .foregroundStyle(active ? palette.bg : palette.muted)
+                            .background(active ? palette.fg : palette.surface2, in: Capsule())
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -109,16 +113,16 @@ struct CatalogView: View {
         if viewModel.filtered.isEmpty {
             VStack(spacing: 6) {
                 Text("No coffees match")
-                    .font(.hanken(15, weight: 600))
+                    .font(.app(15, weight: .semibold))
                     .foregroundStyle(palette.fg)
                 Text("Try a different flavor, origin, or roast.")
-                    .font(.hanken(13))
+                    .font(.app(13))
                     .foregroundStyle(palette.muted)
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 60)
         } else if viewModel.layout == .grid {
-            LazyVGrid(columns: gridColumns, spacing: 13) {
+            LazyVGrid(columns: gridColumns, spacing: 10) {
                 ForEach(viewModel.filtered) { coffee in
                     NavigationLink(value: coffee) {
                         CoffeeGridCard(coffee: coffee, palette: palette)
@@ -128,7 +132,7 @@ struct CatalogView: View {
             }
             .padding(.top, 18)
         } else {
-            LazyVStack(spacing: 10) {
+            LazyVStack(spacing: 0) {
                 ForEach(viewModel.filtered) { coffee in
                     NavigationLink(value: coffee) {
                         CoffeeListRow(coffee: coffee, palette: palette)
@@ -136,7 +140,7 @@ struct CatalogView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.top, 18)
+            .padding(.top, 8)
         }
     }
 }

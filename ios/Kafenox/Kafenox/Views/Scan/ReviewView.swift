@@ -14,10 +14,11 @@ struct ReviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 Text("Review details")
-                    .font(.hanken(27, weight: 800))
+                    .font(.app(27, weight: .bold))
+                    .tracking(-0.6)
                     .foregroundStyle(palette.fg)
                 Text("Extracted from the label — edit anything before saving.")
-                    .font(.hanken(13.5))
+                    .font(.app(13.5))
                     .foregroundStyle(palette.muted)
                     .padding(.top, 6)
 
@@ -26,68 +27,71 @@ struct ReviewView: View {
                 VStack(spacing: 13) {
                     field("Roaster", text: $viewModel.draftRoaster, palette: palette)
                     field("Coffee", text: $viewModel.draftName, palette: palette)
-                    HStack(spacing: 11) {
+                    HStack(spacing: 10) {
                         field("Origin", text: $viewModel.draftCountry, palette: palette)
                         field("Region", text: $viewModel.draftRegion, palette: palette)
                     }
-                    HStack(spacing: 11) {
+                    HStack(spacing: 10) {
                         field("Process", text: $viewModel.draftProcess, palette: palette)
                         field("Variety", text: $viewModel.draftVariety, palette: palette)
                     }
                     field("Producer", text: $viewModel.draftProducer, palette: palette)
                     if let flavors = viewModel.original?.flavorNotes, !flavors.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("FLAVOR NOTES")
-                                .font(.dmMono(10))
+                            Text("Flavor notes")
+                                .font(.app(12, weight: .semibold))
                                 .foregroundStyle(palette.muted)
                             FlowLayout(spacing: 7) {
                                 ForEach(flavors, id: \.self) { note in
                                     Text(note)
-                                        .font(.hanken(13, weight: 600))
+                                        .font(.app(13, weight: .medium))
                                         .foregroundStyle(palette.fg)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(palette.surface, in: Capsule())
-                                        .overlay(Capsule().stroke(palette.line, lineWidth: 1))
+                                        .padding(.horizontal, 13)
+                                        .padding(.vertical, 7)
+                                        .background(palette.surface2, in: Capsule())
                                 }
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
                 .padding(.top, 20)
 
                 if let saveError {
                     Text(saveError)
-                        .font(.hanken(13, weight: 600))
-                        .foregroundStyle(.red)
+                        .font(.app(13, weight: .semibold))
+                        .foregroundStyle(Palette.error)
                         .padding(.top, 12)
                 }
 
-                HStack(spacing: 11) {
+                HStack(spacing: 10) {
                     Button(action: onRetake) {
                         Text("Retake")
-                            .font(.hanken(15, weight: 700))
+                            .font(.app(14.5, weight: .semibold))
                             .foregroundStyle(palette.fg)
                             .padding(.horizontal, 22)
-                            .frame(height: 52)
-                            .background(palette.surface, in: RoundedRectangle(cornerRadius: 15))
-                            .overlay(RoundedRectangle(cornerRadius: 15).stroke(palette.line, lineWidth: 1))
+                            .frame(height: 48)
+                            .background(palette.surface, in: RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(palette.line, lineWidth: 1))
                     }
+                    .buttonStyle(.plain)
                     Button {
                         Task { await save() }
                     } label: {
-                        if isSaving {
-                            ProgressView().tint(palette.onAccent).frame(maxWidth: .infinity).frame(height: 52)
-                                .background(palette.accent, in: RoundedRectangle(cornerRadius: 15))
-                        } else {
-                            Text("Add to collection")
-                                .font(.hanken(15, weight: 700))
-                                .foregroundStyle(palette.onAccent)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 52)
-                                .background(palette.accent, in: RoundedRectangle(cornerRadius: 15))
+                        Group {
+                            if isSaving {
+                                ProgressView().tint(palette.bg)
+                            } else {
+                                Text("Add to collection")
+                                    .font(.app(14.5, weight: .semibold))
+                                    .foregroundStyle(palette.bg)
+                            }
                         }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(palette.fg, in: RoundedRectangle(cornerRadius: 14))
                     }
+                    .buttonStyle(.plain)
                     .disabled(isSaving)
                 }
                 .padding(.top, 26)
@@ -101,24 +105,19 @@ struct ReviewView: View {
 
     private func summaryRow(palette: Palette) -> some View {
         HStack(spacing: 13) {
-            ZStack {
-                (viewModel.original?.swatchColor ?? palette.accent)
-                Text(viewModel.original?.initials ?? "?")
-                    .font(.dmMono(17))
-                    .foregroundStyle(.white.opacity(0.6))
-            }
-            .frame(width: 54, height: 54)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            RoundedRectangle(cornerRadius: 12)
+                .fill(viewModel.original?.swatchColor ?? palette.surface2)
+                .frame(width: 38, height: 38)
 
             VStack(alignment: .leading, spacing: 5) {
                 HStack(spacing: 6) {
-                    Circle().fill(palette.accent2).frame(width: 7, height: 7)
+                    Circle().fill(Palette.success).frame(width: 6, height: 6)
                     Text("Extracted · high confidence")
-                        .font(.hanken(10.5, weight: 700))
-                        .foregroundStyle(palette.accent)
+                        .font(.app(11, weight: .medium))
+                        .foregroundStyle(palette.muted)
                 }
                 Text(viewModel.draftName.isEmpty ? "Untitled" : viewModel.draftName)
-                    .font(.hanken(16, weight: 700))
+                    .font(.app(16, weight: .semibold))
                     .foregroundStyle(palette.fg)
             }
         }
@@ -130,14 +129,14 @@ struct ReviewView: View {
 
     private func field(_ label: String, text: Binding<String>, palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(label.uppercased())
-                .font(.dmMono(10))
+            Text(label)
+                .font(.app(12, weight: .semibold))
                 .foregroundStyle(palette.muted)
             TextField("", text: text)
-                .font(.hanken(15, weight: 600))
+                .font(.app(14.5, weight: .medium))
                 .foregroundStyle(palette.fg)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
+                .padding(.horizontal, 13)
+                .padding(.vertical, 11)
                 .background(palette.surface, in: RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.line, lineWidth: 1))
         }

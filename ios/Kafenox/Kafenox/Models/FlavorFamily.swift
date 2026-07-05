@@ -46,6 +46,17 @@ struct FlavorFamily: Identifiable, Hashable {
     static func of(_ note: String) -> FlavorFamily {
         lookup[note] ?? other
     }
+
+    private static let byName: [String: FlavorFamily] = {
+        var map: [String: FlavorFamily] = [FlavorFamily.other.name: .other]
+        for family in all { map[family.name] = family }
+        return map
+    }()
+
+    /// Family by its backend-assigned name (see Coffee.flavorFamilies).
+    static func named(_ name: String) -> FlavorFamily? {
+        byName[name]
+    }
 }
 
 /// How often a single flavor note appears across the collection.

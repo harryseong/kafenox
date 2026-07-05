@@ -57,6 +57,7 @@ def handler(event, context):
         item.variety = extracted.get("variety")
         item.producer = extracted.get("producer")
         item.flavorNotes = extracted.get("flavorNotes", [])
+        item.flavorFamilies = extracted.get("flavorFamilies") or None
         item.altitude = extracted.get("altitude")
         item.lat = lat
         item.lng = lng

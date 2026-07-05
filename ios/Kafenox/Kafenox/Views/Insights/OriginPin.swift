@@ -15,9 +15,9 @@ struct OriginPin: View {
 
     var body: some View {
         Circle()
-            .fill(palette.accent)
+            .fill(palette.fg)
             .frame(width: diameter, height: diameter)
             .overlay(Circle().stroke(palette.bg, lineWidth: 3))
-            .shadow(color: palette.accent.opacity(0.4), radius: 4)
+            .shadow(color: palette.shadow, radius: 4)
     }
 }

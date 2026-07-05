@@ -14,20 +14,20 @@ struct KafenoxTabBar: View {
             Button(action: onScan) {
                 VStack(spacing: 5) {
                     Circle()
-                        .fill(palette.accent)
-                        .frame(width: 54, height: 54)
+                        .fill(palette.fg)
+                        .frame(width: 50, height: 50)
                         .overlay(
                             Image(systemName: "camera.fill")
-                                .foregroundStyle(palette.onAccent)
-                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundStyle(palette.bg)
+                                .font(.system(size: 21, weight: .semibold))
                         )
-                        .shadow(color: palette.accent.opacity(0.5), radius: 10, y: 4)
+                        .shadow(color: palette.shadow, radius: 9, y: 4)
                     Text("Scan")
-                        .font(.hanken(10, weight: 700))
-                        .foregroundStyle(palette.accent)
+                        .font(.app(10, weight: .semibold))
+                        .foregroundStyle(palette.fg)
                 }
                 .frame(maxWidth: .infinity)
-                .offset(y: -6)
+                .offset(y: -9)
             }
             .buttonStyle(.plain)
 
@@ -35,8 +35,8 @@ struct KafenoxTabBar: View {
         }
         .padding(.horizontal, 32)
         .padding(.top, 11)
-        .frame(height: 88)
-        .background(palette.surface)
+        .frame(height: 84)
+        .background(palette.surface.ignoresSafeArea(edges: .bottom))
         .overlay(Rectangle().fill(palette.line).frame(height: 1), alignment: .top)
     }
 
@@ -46,9 +46,9 @@ struct KafenoxTabBar: View {
         } label: {
             VStack(spacing: 5) {
                 Image(systemName: systemImage).font(.system(size: 21))
-                Text(label).font(.hanken(10, weight: 600))
+                Text(label).font(.app(10, weight: .semibold))
             }
-            .foregroundStyle(activeTab == tab ? palette.accent : palette.muted)
+            .foregroundStyle(activeTab == tab ? palette.fg : palette.muted)
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)

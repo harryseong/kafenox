@@ -5,51 +5,47 @@ struct CoffeeListRow: View {
     let palette: Palette
 
     var body: some View {
-        HStack(spacing: 13) {
-            ZStack {
-                coffee.swatchColor
-                LinearGradient(
-                    colors: [Color.white.opacity(0.18), Color.black.opacity(0.22)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
-                Text(coffee.initials)
-                    .font(.dmMono(19))
-                    .foregroundStyle(.white.opacity(0.55))
-            }
-            .frame(width: 62, height: 62)
-            .clipShape(RoundedRectangle(cornerRadius: 13))
+        HStack(alignment: .center, spacing: 13) {
+            Circle()
+                .fill(coffee.swatchColor)
+                .frame(width: 10, height: 10)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text((coffee.roaster ?? "").uppercased())
-                    .font(.dmMono(9.5))
-                    .foregroundStyle(palette.muted)
+            VStack(alignment: .leading, spacing: 3) {
                 Text(coffee.coffeeName ?? "Untitled")
-                    .font(.hanken(15.5, weight: 700))
+                    .font(.app(15.5, weight: .semibold))
+                    .tracking(-0.2)
                     .foregroundStyle(palette.fg)
                     .lineLimit(1)
-                Text("\(coffee.originLabel) · \(coffee.roastLevel?.capitalized ?? "—")")
-                    .font(.hanken(12))
+                Text(subtitle)
+                    .font(.app(12, weight: .medium))
                     .foregroundStyle(palette.muted)
+                    .lineLimit(1)
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(ratingText)
-                    .font(.dmMono(19, medium: true))
-                    .foregroundStyle(palette.accent)
-                Text("/ 10")
-                    .font(.hanken(9, weight: 600))
-                    .foregroundStyle(palette.muted)
-            }
+            Text(ratingText)
+                .font(.app(13, weight: .semibold))
+                .monospacedDigit()
+                .foregroundStyle(palette.muted)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(palette.muted)
         }
-        .padding(11)
-        .background(palette.surface, in: RoundedRectangle(cornerRadius: 18))
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(palette.line, lineWidth: 1))
+        .padding(.vertical, 14)
+        .padding(.horizontal, 2)
+        .overlay(Rectangle().fill(palette.line).frame(height: 1), alignment: .bottom)
+    }
+
+    private var subtitle: String {
+        [coffee.roaster, coffee.originLabel.isEmpty ? nil : coffee.originLabel]
+            .compactMap { $0 }
+            .joined(separator: " · ")
     }
 
     private var ratingText: String {
         guard let rating = coffee.rating else { return "—" }
-        return "\(rating)"
+        return "\(rating)/10"
     }
 }
