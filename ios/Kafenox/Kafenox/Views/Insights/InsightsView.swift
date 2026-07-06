@@ -10,12 +10,13 @@ struct InsightsView: View {
         case origins = "Origins"
         case flavors = "Flavors"
         case timeline = "Timeline"
-        case askAI = "Ask AI"
         var id: String { rawValue }
     }
 
     @State private var section: Section = .origins
     @State private var askViewModel = AskAIViewModel()
+    @State private var isAskPresented = false
+    @State private var isScrolled = false
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 10, longitude: 20),
                             span: MKCoordinateSpan(latitudeDelta: 140, longitudeDelta: 140))
@@ -23,38 +24,33 @@ struct InsightsView: View {
 
     var body: some View {
         let palette = themeStore.palette
-        Group {
-            if section == .askAI {
-                // The chat manages its own scrolling and pins the composer at
-                // the bottom, so its header stays fixed instead of scrolling.
-                VStack(alignment: .leading, spacing: 0) {
-                    header(palette: palette)
-                    tabPills(palette: palette)
-                    AskAIView(viewModel: askViewModel, palette: palette)
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 6)
-            } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        header(palette: palette)
-                        tabPills(palette: palette)
-                        switch section {
-                        case .origins:
-                            originsContent(palette: palette)
-                        case .flavors:
-                            FlavorsInsightView(viewModel: viewModel, palette: palette)
-                        case .timeline:
-                            TimelineInsightView(groups: viewModel.timelineGroups, palette: palette)
-                        case .askAI:
-                            EmptyView()
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 6)
-                    .padding(.bottom, 40)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                header(palette: palette)
+                tabPills(palette: palette)
+                switch section {
+                case .origins:
+                    originsContent(palette: palette)
+                case .flavors:
+                    FlavorsInsightView(viewModel: viewModel, palette: palette)
+                case .timeline:
+                    TimelineInsightView(groups: viewModel.timelineGroups, palette: palette)
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 6)
+            .padding(.bottom, 40)
+        }
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 52
+        } action: { _, scrolled in
+            withAnimation(.easeOut(duration: 0.18)) { isScrolled = scrolled }
+        }
+        .overlay(alignment: .top) {
+            CompactHeaderBar(title: "Insights", visible: isScrolled, palette: palette)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            askFab(palette: palette)
         }
         .background(palette.bg)
         // The Map on the Origins tab makes the NavigationStack show its
@@ -62,6 +58,30 @@ struct InsightsView: View {
         // the others. Every tab draws its own header, so hide the bar.
         .toolbar(.hidden, for: .navigationBar)
         .task { await viewModel.loadIfNeeded() }
+        .fullScreenCover(isPresented: $isAskPresented) {
+            AskAIScreen(viewModel: askViewModel, metaLine: viewModel.askMetaLine)
+        }
+    }
+
+    /// The floating Ask AI entry point, bottom-right above the tab bar.
+    private func askFab(palette: Palette) -> some View {
+        Button {
+            isAskPresented = true
+        } label: {
+            Circle()
+                .fill(palette.fg)
+                .frame(width: 52, height: 52)
+                .overlay(
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(palette.bg)
+                )
+                .shadow(color: palette.shadow, radius: 15, y: 7)
+                .opacity(0.6)
+        }
+        .buttonStyle(PressScaleButtonStyle())
+        .padding(.trailing, 20)
+        .padding(.bottom, 20)
     }
 
     private var metaLine: String {
@@ -69,7 +89,6 @@ struct InsightsView: View {
         case .origins: return viewModel.originMetaLine
         case .flavors: return viewModel.flavorMetaLine
         case .timeline: return viewModel.timelineMetaLine
-        case .askAI: return viewModel.askMetaLine
         }
     }
 
@@ -105,7 +124,7 @@ struct InsightsView: View {
                             .padding(.horizontal, 15)
                             .background(active ? palette.fg : palette.surface2, in: Capsule())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PressScaleButtonStyle(scale: 0.94))
                 }
             }
         }
@@ -175,5 +194,27 @@ struct InsightsView: View {
             }
             .frame(height: 4)
         }
+    }
+}
+
+/// The condensed title bar that fades in over Collection/Insights once the
+/// large masthead scrolls out of view.
+struct CompactHeaderBar: View {
+    let title: String
+    let visible: Bool
+    let palette: Palette
+
+    var body: some View {
+        Text(title)
+            .font(.app(15.5, weight: .bold))
+            .tracking(-0.2)
+            .foregroundStyle(palette.fg)
+            .frame(maxWidth: .infinity)
+            .frame(height: 44)
+            .background(palette.bg)
+            .overlay(Rectangle().fill(palette.line).frame(height: 1), alignment: .bottom)
+            .opacity(visible ? 1 : 0)
+            .offset(y: visible ? 0 : -10)
+            .allowsHitTesting(false)
     }
 }
