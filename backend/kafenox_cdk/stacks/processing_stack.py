@@ -29,6 +29,8 @@ class ProcessingStack(Stack):
         *,
         env_name: str,
         bedrock_model_id: str,
+        haiku_model_id: str,
+        sonnet_model_id: str,
         raw_bucket: s3.IBucket,
         processed_bucket: s3.IBucket,
         coffee_table: dynamodb.ITable,
@@ -77,7 +79,10 @@ class ProcessingStack(Stack):
             tracing=lambda_.Tracing.ACTIVE,
             environment={
                 "PROCESSED_BUCKET_NAME": processed_bucket.bucket_name,
+                "COFFEE_TABLE_NAME": coffee_table.table_name,
                 "BEDROCK_MODEL_ID": bedrock_model_id,
+                "BEDROCK_HAIKU_MODEL_ID": haiku_model_id,
+                "BEDROCK_SONNET_MODEL_ID": sonnet_model_id,
                 **POWERTOOLS_ENV,
             },
             # kafenox_common.flavor_families is used to categorize the
@@ -85,13 +90,16 @@ class ProcessingStack(Stack):
             layers=[common_layer],
         )
         processed_bucket.grant_read(extract_fn)
+        # extract reads the item's Settings-selected model choices
+        coffee_table.grant_read_data(extract_fn)
         extract_fn.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["bedrock:InvokeModel"],
                 resources=[
-                    f"arn:aws:bedrock:{self.region}:{self.account}:inference-profile/{bedrock_model_id}",
-                    "arn:aws:bedrock:*::foundation-model/anthropic.*",
-                ],
+                    f"arn:aws:bedrock:{self.region}:{self.account}:inference-profile/{model_id}"
+                    for model_id in dict.fromkeys((bedrock_model_id, haiku_model_id, sonnet_model_id))
+                ]
+                + ["arn:aws:bedrock:*::foundation-model/anthropic.*"],
             )
         )
         # Newer Bedrock models (e.g. Claude Sonnet 4.6) are gated behind an

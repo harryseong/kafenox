@@ -4,6 +4,7 @@ import SwiftUI
 struct InsightsView: View {
     @Environment(ThemeStore.self) private var themeStore
     let viewModel: InsightsViewModel
+    var onMenu: () -> Void = {}
 
     enum Section: String, CaseIterable, Identifiable {
         case origins = "Origins"
@@ -73,14 +74,19 @@ struct InsightsView: View {
     }
 
     private func header(palette: Palette) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Insights")
-                .font(.app(32, weight: .bold))
-                .tracking(-0.8)
-                .foregroundStyle(palette.fg)
-            Text(metaLine)
-                .font(.app(13, weight: .medium))
-                .foregroundStyle(palette.muted)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Insights")
+                    .font(.app(32, weight: .bold))
+                    .tracking(-0.8)
+                    .foregroundStyle(palette.fg)
+                Text(metaLine)
+                    .font(.app(13, weight: .medium))
+                    .foregroundStyle(palette.muted)
+            }
+            Spacer()
+            MenuButton(palette: palette, action: onMenu)
+                .padding(.top, 3)
         }
     }
 

@@ -30,6 +30,8 @@ class ApiStack(Stack):
         processed_bucket: s3.IBucket,
         bedrock_model_id: str,
         insights_model_id: str,
+        haiku_model_id: str,
+        sonnet_model_id: str,
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -67,7 +69,7 @@ class ApiStack(Stack):
             )
             return fn
 
-        def grant_bedrock_invoke(fn: lambda_.Function, model_id: str) -> None:
+        def grant_bedrock_invoke(fn: lambda_.Function, *model_ids: str) -> None:
             """Mirror of the extract function's Bedrock grants in
             processing_stack.py: invoke via the global inference profile, plus
             marketplace self-subscribe for gated Claude models (those actions
@@ -76,9 +78,10 @@ class ApiStack(Stack):
                 iam.PolicyStatement(
                     actions=["bedrock:InvokeModel"],
                     resources=[
-                        f"arn:aws:bedrock:{self.region}:{self.account}:inference-profile/{model_id}",
-                        "arn:aws:bedrock:*::foundation-model/anthropic.*",
-                    ],
+                        f"arn:aws:bedrock:{self.region}:{self.account}:inference-profile/{model_id}"
+                        for model_id in dict.fromkeys(model_ids)
+                    ]
+                    + ["arn:aws:bedrock:*::foundation-model/anthropic.*"],
                 )
             )
             fn.add_to_role_policy(
@@ -102,13 +105,21 @@ class ApiStack(Stack):
         update_coffee_fn = make_fn(
             "UpdateCoffeeFn",
             "update_coffee",
-            {"BEDROCK_MODEL_ID": bedrock_model_id},
+            {
+                "BEDROCK_MODEL_ID": bedrock_model_id,
+                "BEDROCK_HAIKU_MODEL_ID": haiku_model_id,
+                "BEDROCK_SONNET_MODEL_ID": sonnet_model_id,
+            },
             timeout_seconds=30,
         )
         ask_insights_fn = make_fn(
             "AskInsightsFn",
             "ask_insights",
-            {"BEDROCK_INSIGHTS_MODEL_ID": insights_model_id},
+            {
+                "BEDROCK_INSIGHTS_MODEL_ID": insights_model_id,
+                "BEDROCK_HAIKU_MODEL_ID": haiku_model_id,
+                "BEDROCK_SONNET_MODEL_ID": sonnet_model_id,
+            },
             timeout_seconds=30,
         )
         delete_coffee_fn = make_fn(
@@ -127,8 +138,8 @@ class ApiStack(Stack):
         coffee_table.grant_read_write_data(update_coffee_fn)
         coffee_table.grant_read_write_data(delete_coffee_fn)
         coffee_table.grant_read_data(ask_insights_fn)
-        grant_bedrock_invoke(update_coffee_fn, bedrock_model_id)
-        grant_bedrock_invoke(ask_insights_fn, insights_model_id)
+        grant_bedrock_invoke(update_coffee_fn, bedrock_model_id, haiku_model_id, sonnet_model_id)
+        grant_bedrock_invoke(ask_insights_fn, insights_model_id, haiku_model_id, sonnet_model_id)
         raw_bucket.grant_put(upload_init_fn)
         raw_bucket.grant_delete(delete_coffee_fn)
         processed_bucket.grant_delete(delete_coffee_fn)

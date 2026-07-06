@@ -35,7 +35,11 @@ final class AskAIViewModel {
         isError = false
         Task {
             do {
-                let answer = try await APIClient.shared.askInsights(question: question, history: history)
+                let answer = try await APIClient.shared.askInsights(
+                    question: question,
+                    history: history,
+                    model: SettingsStore.shared.model(for: .ask).rawValue
+                )
                 messages.append(ChatMessage(role: .assistant, text: answer))
             } catch {
                 isError = true

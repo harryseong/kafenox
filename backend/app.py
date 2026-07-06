@@ -23,6 +23,8 @@ processing = ProcessingStack(
     f"KafenoxProcessing-{config.env_name}",
     env_name=config.env_name,
     bedrock_model_id=config.bedrock_model_id,
+    haiku_model_id=config.haiku_model_id,
+    sonnet_model_id=config.sonnet_model_id,
     raw_bucket=storage.raw_bucket,
     processed_bucket=storage.processed_bucket,
     coffee_table=storage.coffee_table,
@@ -38,6 +40,8 @@ api = ApiStack(
     processed_bucket=storage.processed_bucket,
     bedrock_model_id=config.bedrock_model_id,
     insights_model_id=config.insights_model_id,
+    haiku_model_id=config.haiku_model_id,
+    sonnet_model_id=config.sonnet_model_id,
     env=env,
 )
 

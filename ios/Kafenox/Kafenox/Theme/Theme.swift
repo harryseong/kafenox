@@ -3,13 +3,15 @@ import SwiftUI
 /// The two palettes from the Claude Design v3 prototype's theme tokens.
 enum Theme: String, CaseIterable {
     case light, dark
+}
+
+/// What the user picks in Settings; `system` resolves to light/dark from
+/// the device appearance at render time.
+enum ThemeChoice: String, CaseIterable {
+    case light, dark, system
 
     var label: String {
         rawValue.prefix(1).uppercased() + rawValue.dropFirst()
-    }
-
-    func toggled() -> Theme {
-        self == .light ? .dark : .light
     }
 }
 

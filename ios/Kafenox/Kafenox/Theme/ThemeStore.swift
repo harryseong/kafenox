@@ -4,20 +4,29 @@ import SwiftUI
 final class ThemeStore {
     private static let storageKey = "kafenox.theme"
 
-    var theme: Theme {
-        didSet { UserDefaults.standard.set(theme.rawValue, forKey: Self.storageKey) }
+    var choice: ThemeChoice {
+        didSet { UserDefaults.standard.set(choice.rawValue, forKey: Self.storageKey) }
     }
 
-    var palette: Palette { .for(theme) }
+    /// Mirrors the device appearance; RootView keeps it in sync from the
+    /// SwiftUI environment so `system` can resolve without every view
+    /// re-reading `colorScheme`.
+    var systemIsDark = false
+
+    var resolvedTheme: Theme {
+        switch choice {
+        case .light: .light
+        case .dark: .dark
+        case .system: systemIsDark ? .dark : .light
+        }
+    }
+
+    var palette: Palette { .for(resolvedTheme) }
 
     init() {
         let stored = UserDefaults.standard.string(forKey: Self.storageKey)
-        // Values persisted by the retired 3-theme system ("warm"/"minimal")
-        // fall through to light; "dark" still parses.
-        theme = stored.flatMap(Theme.init(rawValue:)) ?? .light
-    }
-
-    func toggle() {
-        theme = theme.toggled()
+        // "light"/"dark" persisted by the previous toggle carry over; values
+        // from the retired 3-theme system ("warm"/"minimal") fall to light.
+        choice = stored.flatMap(ThemeChoice.init(rawValue:)) ?? .light
     }
 }

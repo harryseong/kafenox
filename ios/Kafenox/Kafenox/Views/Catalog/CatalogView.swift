@@ -3,6 +3,7 @@ import SwiftUI
 struct CatalogView: View {
     @Environment(ThemeStore.self) private var themeStore
     let viewModel: CatalogViewModel
+    var onMenu: () -> Void = {}
 
     private let gridColumns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
@@ -39,21 +40,8 @@ struct CatalogView: View {
                     .foregroundStyle(palette.muted)
             }
             Spacer()
-            Button {
-                themeStore.toggle()
-            } label: {
-                Circle()
-                    .fill(palette.surface)
-                    .frame(width: 36, height: 36)
-                    .overlay(Circle().stroke(palette.line, lineWidth: 1))
-                    .overlay(
-                        Image(systemName: themeStore.theme == .light ? "sun.max" : "moon")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(palette.fg)
-                    )
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 3)
+            MenuButton(palette: palette, action: onMenu)
+                .padding(.top, 3)
         }
     }
 

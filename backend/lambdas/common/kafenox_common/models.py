@@ -36,6 +36,10 @@ class CoffeeModel(Model):
     flavorNotes = ListAttribute(of=UnicodeAttribute, default=list, null=True)
     # note -> flavor family name (see kafenox_common.flavor_families)
     flavorFamilies = MapAttribute(null=True)
+    # feature -> model choice ("haiku"/"sonnet") captured at upload time so
+    # the async extraction pipeline honors the user's Settings selection
+    # (see kafenox_common.model_prefs)
+    aiModels = MapAttribute(null=True)
     altitude = UnicodeAttribute(null=True)
 
     lat = NumberAttribute(null=True)
@@ -46,7 +50,7 @@ class CoffeeModel(Model):
 
     def to_dict(self) -> dict:
         values = dict(self.attribute_values)
-        families = values.get("flavorFamilies")
-        if isinstance(families, MapAttribute):
-            values["flavorFamilies"] = families.as_dict()
+        for key, value in values.items():
+            if isinstance(value, MapAttribute):
+                values[key] = value.as_dict()
         return values

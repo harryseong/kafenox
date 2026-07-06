@@ -62,8 +62,15 @@ actor APIClient {
         let uploadUrl: URL
     }
 
-    func initiateUpload() async throws -> UploadInit {
-        let data = try await request("uploads", method: "POST")
+    /// `models` carries the Settings-selected Bedrock model per feature
+    /// (e.g. ["scan": "haiku", "notes": "haiku"]); the backend stores it on
+    /// the item so the async extraction pipeline honors it.
+    func initiateUpload(models: [String: String] = [:]) async throws -> UploadInit {
+        var body: Data?
+        if !models.isEmpty {
+            body = try JSONSerialization.data(withJSONObject: ["models": models])
+        }
+        let data = try await request("uploads", method: "POST", body: body)
         do {
             return try decoder.decode(UploadInit.self, from: data)
         } catch {
@@ -113,12 +120,15 @@ actor APIClient {
     }
 
     /// POST /insights/ask -- Claude-backed Q&A over the user's collection.
-    func askInsights(question: String, history: [(role: String, text: String)]) async throws -> String {
+    func askInsights(question: String, history: [(role: String, text: String)], model: String? = nil) async throws -> String {
         struct Response: Decodable { let answer: String }
-        let payload: [String: Any] = [
+        var payload: [String: Any] = [
             "question": question,
             "history": history.map { ["role": $0.role, "text": $0.text] },
         ]
+        if let model {
+            payload["model"] = model
+        }
         let body = try JSONSerialization.data(withJSONObject: payload)
         let data = try await request("insights/ask", method: "POST", body: body)
         do {
