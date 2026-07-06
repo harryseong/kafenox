@@ -3,6 +3,7 @@ import os
 
 import boto3
 from aws_lambda_powertools import Logger, Tracer
+from kafenox_common.model_prefs import resolve_model_id
 from kafenox_common.models import CoffeeModel
 
 logger = Logger()
@@ -96,7 +97,7 @@ def handler(event, context):
 
     try:
         response = bedrock.converse(
-            modelId=os.environ["BEDROCK_INSIGHTS_MODEL_ID"],
+            modelId=resolve_model_id(body.get("model"), os.environ["BEDROCK_INSIGHTS_MODEL_ID"]),
             system=[{"text": system_prompt}],
             messages=messages,
             inferenceConfig={"maxTokens": 600},

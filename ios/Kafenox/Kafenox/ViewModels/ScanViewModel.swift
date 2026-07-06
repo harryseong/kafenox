@@ -65,7 +65,11 @@ final class ScanViewModel {
                 step = .failed(message: "Couldn't process that photo.")
                 return
             }
-            let upload = try await APIClient.shared.initiateUpload()
+            let models = [
+                "scan": SettingsStore.shared.model(for: .scan).rawValue,
+                "notes": SettingsStore.shared.model(for: .notes).rawValue,
+            ]
+            let upload = try await APIClient.shared.initiateUpload(models: models)
             photoId = upload.photoId
             try await APIClient.shared.uploadPhoto(jpeg, to: upload.uploadUrl)
 

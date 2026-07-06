@@ -279,7 +279,11 @@ struct EditCoffeeView: View {
         if draftVariety != (coffee.variety ?? "") { changed["variety"] = draftVariety }
         if draftRoastDate != (coffee.roastDate ?? "") { changed["roastDate"] = draftRoastDate }
         if draftRoastLevel != (coffee.roastLevel ?? "") { changed["roastLevel"] = draftRoastLevel }
-        if draftFlavorNotes != coffee.flavorNotes { changed["flavorNotes"] = draftFlavorNotes }
+        if draftFlavorNotes != coffee.flavorNotes {
+            changed["flavorNotes"] = draftFlavorNotes
+            // Settings-selected model for categorizing any new notes.
+            changed["model"] = SettingsStore.shared.model(for: .notes).rawValue
+        }
 
         guard !changed.isEmpty else {
             dismiss()

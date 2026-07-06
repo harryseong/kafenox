@@ -16,13 +16,17 @@ struct OriginPin: View {
     }
 
     var body: some View {
+        // Always white, even in light mode: the pins sit on the map's own
+        // (dark, saturated) imagery, not on the app background, and white
+        // contrasts best there.
         Circle()
-            .stroke(palette.fg, lineWidth: 1)
+            .stroke(.white, lineWidth: 1)
             .frame(width: ringDiameter, height: ringDiameter)
             .overlay(
                 Circle()
-                    .fill(palette.fg)
+                    .fill(.white)
                     .frame(width: 6, height: 6)
             )
+            .shadow(color: .black.opacity(0.35), radius: 2)
     }
 }

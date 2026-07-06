@@ -4,6 +4,8 @@ import boto3
 from aws_lambda_powertools import Logger, Tracer
 from jsonschema import ValidationError, validate
 from kafenox_common.flavor_families import categorize_flavor_notes
+from kafenox_common.model_prefs import resolve_model_id
+from kafenox_common.models import CoffeeModel
 
 logger = Logger()
 tracer = Tracer()
@@ -101,7 +103,18 @@ def handler(event, context):
     photo_id = event["photoId"]
     processed_bucket = os.environ["PROCESSED_BUCKET_NAME"]
     processed_key = event["processedImageKey"]
-    model_id = os.environ["BEDROCK_MODEL_ID"]
+
+    # The app's Settings screen picks a model per feature; upload_init
+    # stashes the choices on the item since this task runs asynchronously,
+    # long after the originating request.
+    prefs = {}
+    try:
+        prefs = CoffeeModel.get(photo_id).to_dict().get("aiModels") or {}
+    except Exception as exc:
+        logger.warning("Could not read model prefs", photo_id=photo_id, error=str(exc))
+    default_model_id = os.environ["BEDROCK_MODEL_ID"]
+    model_id = resolve_model_id(prefs.get("scan"), default_model_id)
+    notes_model_id = resolve_model_id(prefs.get("notes"), default_model_id)
 
     obj = s3.get_object(Bucket=processed_bucket, Key=processed_key)
     image_bytes = obj["Body"].read()
@@ -151,7 +164,7 @@ def handler(event, context):
     # its client-side note->family lookup when families are absent.
     try:
         extracted["flavorFamilies"] = categorize_flavor_notes(
-            extracted.get("flavorNotes") or [], model_id
+            extracted.get("flavorNotes") or [], notes_model_id
         )
     except Exception as exc:
         logger.warning(

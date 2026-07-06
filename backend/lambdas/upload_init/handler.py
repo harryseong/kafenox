@@ -5,6 +5,7 @@ import uuid
 
 import boto3
 from aws_lambda_powertools import Logger, Tracer
+from kafenox_common.model_prefs import VALID_MODEL_CHOICES
 from kafenox_common.models import CoffeeModel
 
 logger = Logger()
@@ -22,6 +23,25 @@ def _new_photo_id() -> str:
     return uuid.uuid4().hex
 
 
+def _model_prefs(event) -> dict | None:
+    """Optional {"models": {"scan": "haiku", "notes": "sonnet"}} body from
+    the app's Settings; stored on the item so the async extraction pipeline
+    can honor it. Unknown features/choices are dropped, not rejected."""
+    try:
+        body = json.loads(event.get("body") or "{}")
+    except json.JSONDecodeError:
+        return None
+    models = body.get("models")
+    if not isinstance(models, dict):
+        return None
+    prefs = {
+        feature: choice
+        for feature, choice in models.items()
+        if feature in ("scan", "notes") and choice in VALID_MODEL_CHOICES
+    }
+    return prefs or None
+
+
 @logger.inject_lambda_context(log_event=False)
 @tracer.capture_lambda_handler
 def handler(event, context):
@@ -36,6 +56,7 @@ def handler(event, context):
         rawImageKey=raw_key,
         isVerified=False,
         flavorNotes=[],
+        aiModels=_model_prefs(event),
     ).save()
     logger.info("Created pending coffee item", photo_id=photo_id)
 

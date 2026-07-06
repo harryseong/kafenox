@@ -22,6 +22,9 @@
 		660512EFAAB8598270F1CDB3 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC7806F9F3976236D1017CD3 /* KeychainStore.swift */; };
 		69C0704E0B49E9E9ACE31106 /* FlavorsInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3DA7DDAF6C13A09DD2CD4E /* FlavorsInsightView.swift */; };
 		AA10AF01AA10AF01AA10AF01 /* AskAIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10AF02AA10AF02AA10AF02 /* AskAIView.swift */; };
+		BB20BF01BB20BF01BB20BF01 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20BF02BB20BF02BB20BF02 /* SettingsStore.swift */; };
+		BB20BF03BB20BF03BB20BF03 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20BF04BB20BF04BB20BF04 /* SettingsView.swift */; };
+		BB20BF05BB20BF05BB20BF05 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB20BF06BB20BF06BB20BF06 /* SideMenuView.swift */; };
 		AA10AF03AA10AF03AA10AF03 /* AskAIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10AF04AA10AF04AA10AF04 /* AskAIViewModel.swift */; };
 		AA10AF05AA10AF05AA10AF05 /* TimelineInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10AF06AA10AF06AA10AF06 /* TimelineInsightView.swift */; };
 		8E3380F0B576C501BC44A009 /* ScanFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD02B96D6D03F18B2323B2F /* ScanFlowView.swift */; };
@@ -60,6 +63,9 @@
 		45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewModel.swift; sourceTree = "<group>"; };
 		5F3DA7DDAF6C13A09DD2CD4E /* FlavorsInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlavorsInsightView.swift; sourceTree = "<group>"; };
 		AA10AF02AA10AF02AA10AF02 /* AskAIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskAIView.swift; sourceTree = "<group>"; };
+		BB20BF02BB20BF02BB20BF02 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		BB20BF04BB20BF04BB20BF04 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BB20BF06BB20BF06BB20BF06 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		AA10AF04AA10AF04AA10AF04 /* AskAIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskAIViewModel.swift; sourceTree = "<group>"; };
 		AA10AF06AA10AF06AA10AF06 /* TimelineInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineInsightView.swift; sourceTree = "<group>"; };
 		654C2AF915808DC603B31092 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -168,8 +174,18 @@
 				AE4562FCF41E18156C09C059 /* Detail */,
 				446F70D6D473DA1C0DDC56C7 /* Insights */,
 				4F82CD6B04BC4D34C5D3E889 /* Scan */,
+				BB20BF07BB20BF07BB20BF07 /* Settings */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BB20BF07BB20BF07BB20BF07 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				BB20BF04BB20BF04BB20BF04 /* SettingsView.swift */,
+				BB20BF06BB20BF06BB20BF06 /* SideMenuView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		B795AA55E65C3D07333712DF /* ViewModels */ = {
@@ -180,6 +196,7 @@
 				A8F564ED163454B24E41530F /* DetailViewModel.swift */,
 				7C0244ADBA76DAC889EAFBC3 /* InsightsViewModel.swift */,
 				45BB90C5E15E3E95C4861A2B /* ScanViewModel.swift */,
+				BB20BF02BB20BF02BB20BF02 /* SettingsStore.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -299,6 +316,9 @@
 				C006F019E871286CEA467BFC /* APIClient.swift in Sources */,
 				EFFC48C70BB2CCE253D6EA19 /* APIConfig.swift in Sources */,
 				AA10AF01AA10AF01AA10AF01 /* AskAIView.swift in Sources */,
+				BB20BF01BB20BF01BB20BF01 /* SettingsStore.swift in Sources */,
+				BB20BF03BB20BF03BB20BF03 /* SettingsView.swift in Sources */,
+				BB20BF05BB20BF05BB20BF05 /* SideMenuView.swift in Sources */,
 				AA10AF03AA10AF03AA10AF03 /* AskAIViewModel.swift in Sources */,
 				AA10AF05AA10AF05AA10AF05 /* TimelineInsightView.swift in Sources */,
 				43506992021AC6B078B6A803 /* CatalogView.swift in Sources */,

@@ -3,6 +3,7 @@ import os
 
 from aws_lambda_powertools import Logger, Tracer
 from kafenox_common.flavor_families import categorize_flavor_notes
+from kafenox_common.model_prefs import resolve_model_id
 from kafenox_common.models import CoffeeModel
 from kafenox_common.origin_geocode import geocode_origin
 
@@ -26,7 +27,7 @@ EDITABLE_FIELDS = {
 }
 
 
-def _families_for(item: CoffeeModel, notes: list) -> dict | None:
+def _families_for(item: CoffeeModel, notes: list, model_choice: str | None) -> dict | None:
     """Keep existing note->family assignments; categorize only new notes.
     A categorization failure leaves the new notes unmapped (the app falls
     back to its client-side lookup) rather than failing the edit."""
@@ -36,7 +37,10 @@ def _families_for(item: CoffeeModel, notes: list) -> dict | None:
     if new_notes:
         try:
             families.update(
-                categorize_flavor_notes(new_notes, os.environ["BEDROCK_MODEL_ID"])
+                categorize_flavor_notes(
+                    new_notes,
+                    resolve_model_id(model_choice, os.environ["BEDROCK_MODEL_ID"]),
+                )
             )
         except Exception as exc:
             logger.warning("Flavor-family categorization failed", error=str(exc))
@@ -49,6 +53,9 @@ def handler(event, context):
     photo_id = event["pathParameters"]["photoId"]
     body = json.loads(event.get("body") or "{}")
 
+    # Optional Settings-driven model choice for categorizing new flavor
+    # notes; not a persisted field.
+    model_choice = body.get("model")
     updates = {k: v for k, v in body.items() if k in EDITABLE_FIELDS}
     if not updates:
         return {"statusCode": 400, "body": json.dumps({"message": "No editable fields provided"})}
@@ -65,7 +72,7 @@ def handler(event, context):
         updates["lat"], updates["lng"] = geocode_origin(country, region)
 
     if "flavorNotes" in updates:
-        updates["flavorFamilies"] = _families_for(item, updates["flavorNotes"] or [])
+        updates["flavorFamilies"] = _families_for(item, updates["flavorNotes"] or [], model_choice)
 
     # Any manual field edit (other than just setting a rating) marks the
     # item as human-verified.

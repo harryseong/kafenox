@@ -9,6 +9,8 @@ class Config:
     region: str
     bedrock_model_id: str
     insights_model_id: str
+    haiku_model_id: str
+    sonnet_model_id: str
 
 
 def get_config() -> Config:
@@ -38,10 +40,23 @@ def get_config() -> Config:
         "KAFENOX_INSIGHTS_MODEL_ID",
         "global.anthropic.claude-sonnet-4-6",
     )
+    # The Settings screen lets the user pick Haiku or Sonnet per feature;
+    # these are the concrete inference-profile ids those choices map to
+    # (same global cross-region profile scheme as above).
+    haiku_model_id = os.environ.get(
+        "KAFENOX_HAIKU_MODEL_ID",
+        "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+    )
+    sonnet_model_id = os.environ.get(
+        "KAFENOX_SONNET_MODEL_ID",
+        "global.anthropic.claude-sonnet-4-6",
+    )
     return Config(
         env_name=env_name,
         account=account,
         region=region,
         bedrock_model_id=bedrock_model_id,
         insights_model_id=insights_model_id,
+        haiku_model_id=haiku_model_id,
+        sonnet_model_id=sonnet_model_id,
     )
