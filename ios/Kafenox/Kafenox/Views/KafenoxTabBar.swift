@@ -31,7 +31,7 @@ struct KafenoxTabBar: View {
             }
             .buttonStyle(.plain)
 
-            tabButton(tab: .insights, systemImage: "globe.americas.fill", label: "Insights")
+            tabButton(tab: .insights, systemImage: "chart.bar.fill", label: "Insights")
         }
         .padding(.horizontal, 32)
         .padding(.top, 11)
