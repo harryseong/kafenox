@@ -24,7 +24,11 @@ struct RootView: View {
                 switch activeTab {
                 case .catalog:
                     NavigationStack(path: $catalogPath) {
-                        CatalogView(viewModel: catalogViewModel, onMenu: openMenu)
+                        CatalogView(
+                            viewModel: catalogViewModel,
+                            onMenu: openMenu,
+                            onOpen: { catalogPath.append($0) }
+                        )
                     }
                 case .insights:
                     NavigationStack(path: $insightsPath) {
