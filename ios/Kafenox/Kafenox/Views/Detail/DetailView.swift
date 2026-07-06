@@ -31,14 +31,14 @@ struct DetailView: View {
         .navigationBarBackButtonHidden(true)
         // The custom nav row replaces the system back button, which also
         // loses the system back-swipe -- restore it as a swipe starting at
-        // the right screen edge, mostly-horizontal and leftward.
+        // the left screen edge, mostly-horizontal and rightward (the
+        // standard iOS interactive-pop gesture direction).
         .simultaneousGesture(
             DragGesture(minimumDistance: 25, coordinateSpace: .global)
                 .onEnded { value in
                     guard !isDeleteConfirmPresented else { return }
-                    let screenWidth = UIScreen.main.bounds.width
-                    if value.startLocation.x > screenWidth - 60,
-                       value.translation.width < -70,
+                    if value.startLocation.x < 60,
+                       value.translation.width > 70,
                        abs(value.translation.width) > abs(value.translation.height) * 1.5 {
                         dismiss()
                     }
