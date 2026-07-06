@@ -4,6 +4,10 @@ struct CatalogView: View {
     @Environment(ThemeStore.self) private var themeStore
     let viewModel: CatalogViewModel
     var onMenu: () -> Void = {}
+    /// Pushes a coffee's detail screen; provided by RootView, which owns
+    /// the catalog NavigationPath (the swipeable list rows can't use
+    /// NavigationLink -- see SwipeableCoffeeRow).
+    var onOpen: (Coffee) -> Void = { _ in }
 
     @State private var isScrolled = false
     /// photoId of the list row whose swipe actions are currently revealed.
@@ -177,6 +181,7 @@ struct CatalogView: View {
                         coffee: coffee,
                         palette: palette,
                         openId: $swipeOpenId,
+                        onOpen: { onOpen(coffee) },
                         onEdit: { editingCoffee = coffee },
                         onDelete: {
                             deleteError = nil
