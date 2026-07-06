@@ -7,34 +7,38 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     let settings: SettingsStore
 
+    /// Which AI-feature row is expanded in the accordion (one at a time).
+    @State private var expandedFeature: AIFeature?
+
     var body: some View {
         let palette = themeStore.palette
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    dismiss()
-                } label: {
-                    Circle()
-                        .fill(palette.surface)
-                        .frame(width: 36, height: 36)
-                        .overlay(Circle().stroke(palette.line, lineWidth: 1))
-                        .overlay(
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(palette.fg)
-                        )
+                HStack {
+                    Text("Settings")
+                        .font(.app(26, weight: .bold))
+                        .tracking(-0.6)
+                        .foregroundStyle(palette.fg)
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Circle()
+                            .fill(palette.surface)
+                            .frame(width: 36, height: 36)
+                            .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                            .overlay(
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(palette.fg)
+                            )
+                    }
+                    .buttonStyle(PressScaleButtonStyle())
                 }
-                .buttonStyle(.plain)
-
-                Text("Settings")
-                    .font(.app(32, weight: .bold))
-                    .tracking(-0.8)
-                    .foregroundStyle(palette.fg)
-                    .padding(.top, 18)
                 Text("Appearance and AI models")
                     .font(.app(13, weight: .medium))
                     .foregroundStyle(palette.muted)
-                    .padding(.top, 5)
+                    .padding(.top, 6)
 
                 Text("Appearance")
                     .font(.app(12, weight: .semibold))
@@ -52,11 +56,17 @@ struct SettingsView: View {
                     .foregroundStyle(palette.muted)
                     .padding(.top, 5)
 
-                VStack(spacing: 12) {
+                VStack(spacing: 0) {
                     ForEach(AIFeature.allCases) { feature in
-                        featureCard(feature, palette: palette)
+                        featureRow(feature, palette: palette)
+                        if feature != AIFeature.allCases.last {
+                            Rectangle().fill(palette.line).frame(height: 1)
+                        }
                     }
                 }
+                .background(palette.surface, in: RoundedRectangle(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(palette.line, lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.top, 12)
             }
             .padding(.horizontal, 20)
@@ -110,51 +120,69 @@ struct SettingsView: View {
 
     // MARK: AI models
 
-    private func featureCard(_ feature: AIFeature, palette: Palette) -> some View {
-        VStack(alignment: .leading, spacing: 13) {
-            HStack(spacing: 11) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(palette.surface2)
-                    .frame(width: 32, height: 32)
-                    .overlay(
-                        Image(systemName: feature.systemImage)
-                            .font(.system(size: 14, weight: .medium))
+    /// A collapsible feature row: header shows the current model; expanding
+    /// reveals the options with a checkmark on the active one.
+    private func featureRow(_ feature: AIFeature, palette: Palette) -> some View {
+        let expanded = expandedFeature == feature
+        return VStack(spacing: 0) {
+            Button {
+                withAnimation(.easeOut(duration: 0.18)) {
+                    expandedFeature = expanded ? nil : feature
+                }
+            } label: {
+                HStack(spacing: 11) {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(palette.surface2)
+                        .frame(width: 30, height: 30)
+                        .overlay(
+                            Image(systemName: feature.systemImage)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(palette.fg)
+                        )
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(feature.title)
+                            .font(.app(14, weight: .semibold))
+                            .tracking(-0.2)
                             .foregroundStyle(palette.fg)
-                    )
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(feature.title)
-                        .font(.app(14.5, weight: .semibold))
-                        .tracking(-0.2)
-                        .foregroundStyle(palette.fg)
-                    Text(feature.subtitle)
-                        .font(.app(12, weight: .medium))
+                        Text(feature.subtitle)
+                            .font(.app(11.5, weight: .medium))
+                            .foregroundStyle(palette.muted)
+                    }
+                    Spacer(minLength: 8)
+                    Text(settings.model(for: feature).displayName)
+                        .font(.app(13, weight: .medium))
                         .foregroundStyle(palette.muted)
+                        .lineLimit(1)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(palette.muted)
+                        .rotationEffect(.degrees(expanded ? 90 : 0))
                 }
+                .padding(.vertical, 13)
+                .padding(.horizontal, 14)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
 
-            VStack(spacing: 6) {
-                ForEach(ModelChoice.allCases) { model in
-                    modelRow(model, feature: feature, palette: palette)
+            if expanded {
+                VStack(spacing: 0) {
+                    Rectangle().fill(palette.line).frame(height: 1)
+                    ForEach(ModelChoice.allCases) { model in
+                        optionRow(model, feature: feature, palette: palette)
+                    }
                 }
+                .background(palette.surface2)
             }
         }
-        .padding(.vertical, 15)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(palette.surface, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(palette.line, lineWidth: 1))
     }
 
-    private func modelRow(_ model: ModelChoice, feature: AIFeature, palette: Palette) -> some View {
+    private func optionRow(_ model: ModelChoice, feature: AIFeature, palette: Palette) -> some View {
         let active = settings.model(for: feature) == model
         return Button {
             settings.setModel(model, for: feature)
+            withAnimation(.easeOut(duration: 0.18)) { expandedFeature = nil }
         } label: {
-            HStack(spacing: 11) {
-                Circle()
-                    .fill(palette.bg)
-                    .stroke(active ? palette.fg : palette.muted, lineWidth: active ? 5 : 1.5)
-                    .frame(width: 16, height: 16)
+            HStack(spacing: 10) {
                 Text(model.displayName)
                     .font(.app(13.5, weight: .semibold))
                     .tracking(-0.1)
@@ -163,14 +191,15 @@ struct SettingsView: View {
                 Text(model.tag)
                     .font(.app(11, weight: .medium))
                     .foregroundStyle(palette.muted)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(palette.fg)
+                    .opacity(active ? 1 : 0)
             }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 12)
-            .background(active ? palette.surface2 : .clear, in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(active ? palette.fg : palette.line, lineWidth: 1)
-            )
+            .padding(.vertical, 12)
+            .padding(.leading, 55)
+            .padding(.trailing, 16)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

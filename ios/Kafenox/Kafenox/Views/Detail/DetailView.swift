@@ -132,21 +132,23 @@ struct DetailView: View {
     }
 
     private func header(coffee: Coffee, palette: Palette) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        // v3 compacted the hero: swatch and title sit side by side instead
+        // of stacked.
+        HStack(alignment: .center, spacing: 14) {
             RoundedRectangle(cornerRadius: 14)
                 .fill(coffee.swatchColor)
-                .frame(width: 44, height: 44)
-            Text(coffee.coffeeName ?? "Untitled")
-                .font(.app(28, weight: .bold))
-                .tracking(-0.7)
-                .foregroundStyle(palette.fg)
-                .padding(.top, 14)
-            Text(subtitle(for: coffee))
-                .font(.app(14, weight: .medium))
-                .foregroundStyle(palette.muted)
-                .padding(.top, 6)
+                .frame(width: 46, height: 46)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(coffee.coffeeName ?? "Untitled")
+                    .font(.app(22, weight: .bold))
+                    .tracking(-0.5)
+                    .foregroundStyle(palette.fg)
+                Text(subtitle(for: coffee))
+                    .font(.app(13, weight: .medium))
+                    .foregroundStyle(palette.muted)
+            }
         }
-        .padding(.top, 18)
+        .padding(.top, 16)
     }
 
     private func subtitle(for coffee: Coffee) -> String {
@@ -183,6 +185,12 @@ struct DetailView: View {
                     }
                     .buttonStyle(.plain)
                 }
+            }
+            if coffee.rating == nil {
+                Text("Tap a segment to rate your first cup")
+                    .font(.app(12, weight: .medium))
+                    .foregroundStyle(palette.muted)
+                    .padding(.top, -2)
             }
         }
         .padding(17)

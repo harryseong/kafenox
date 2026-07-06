@@ -57,6 +57,18 @@ extension Color {
     }
 }
 
+/// Mirrors the design's `style-active: transform:scale(...)` press feedback
+/// on circular icon buttons, chips, and the Ask AI FAB.
+struct PressScaleButtonStyle: ButtonStyle {
+    var scale: CGFloat = 0.92
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? scale : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
 /// v3 dropped the custom Hanken Grotesk / DM Mono pairing for the platform
 /// system stack -- everything is the system font differentiated by size,
 /// weight, and tracking. `app` mirrors the design's px sizes 1:1.

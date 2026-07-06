@@ -5,6 +5,7 @@ struct ReviewView: View {
     @Bindable var viewModel: ScanViewModel
     var onAdd: (Coffee) -> Void
     var onRetake: () -> Void
+    var onClose: () -> Void = {}
 
     @State private var isSaving = false
     @State private var saveError: String?
@@ -13,10 +14,25 @@ struct ReviewView: View {
         let palette = themeStore.palette
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text("Review details")
-                    .font(.app(27, weight: .bold))
-                    .tracking(-0.6)
-                    .foregroundStyle(palette.fg)
+                HStack {
+                    Text("Review details")
+                        .font(.app(26, weight: .bold))
+                        .tracking(-0.6)
+                        .foregroundStyle(palette.fg)
+                    Spacer()
+                    Button(action: onClose) {
+                        Circle()
+                            .fill(palette.surface)
+                            .frame(width: 36, height: 36)
+                            .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                            .overlay(
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(palette.fg)
+                            )
+                    }
+                    .buttonStyle(PressScaleButtonStyle())
+                }
                 Text("Extracted from the label — edit anything before saving.")
                     .font(.app(13.5))
                     .foregroundStyle(palette.muted)

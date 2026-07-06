@@ -5,6 +5,14 @@ struct CatalogView: View {
     let viewModel: CatalogViewModel
     var onMenu: () -> Void = {}
 
+    @State private var isScrolled = false
+    /// photoId of the list row whose swipe actions are currently revealed.
+    @State private var swipeOpenId: String?
+    @State private var editingCoffee: Coffee?
+    @State private var deletingCoffee: Coffee?
+    @State private var isDeleting = false
+    @State private var deleteError: String?
+
     private let gridColumns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
     var body: some View {
@@ -20,12 +28,55 @@ struct CatalogView: View {
             .padding(.top, 6)
             .padding(.bottom, 40)
         }
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 52
+        } action: { _, scrolled in
+            withAnimation(.easeOut(duration: 0.18)) { isScrolled = scrolled }
+        }
+        .overlay(alignment: .top) {
+            CompactHeaderBar(title: "Collection", visible: isScrolled, palette: palette)
+        }
         .background(palette.bg)
         .navigationDestination(for: Coffee.self) { coffee in
             DetailView(viewModel: DetailViewModel(coffee: coffee, catalog: viewModel))
         }
         .task { await viewModel.load() }
         .refreshable { await viewModel.load() }
+        .sheet(item: $editingCoffee) { coffee in
+            EditCoffeeView(coffee: coffee) { updated in
+                if let idx = viewModel.coffees.firstIndex(where: { $0.photoId == updated.photoId }) {
+                    viewModel.coffees[idx] = updated
+                }
+            }
+            .environment(themeStore)
+        }
+        .overlay {
+            if deletingCoffee != nil {
+                DeleteConfirmationView(
+                    palette: palette,
+                    isDeleting: isDeleting,
+                    errorMessage: deleteError,
+                    onCancel: { deletingCoffee = nil },
+                    onDelete: { Task { await performDelete() } }
+                )
+            }
+        }
+    }
+
+    @MainActor
+    private func performDelete() async {
+        guard let coffee = deletingCoffee else { return }
+        isDeleting = true
+        deleteError = nil
+        do {
+            try await APIClient.shared.deleteCoffee(photoId: coffee.photoId)
+            viewModel.coffees.removeAll { $0.photoId == coffee.photoId }
+            isDeleting = false
+            deletingCoffee = nil
+        } catch {
+            isDeleting = false
+            deleteError = "Couldn't delete — try again."
+        }
     }
 
     private func header(palette: Palette) -> some View {
@@ -122,10 +173,16 @@ struct CatalogView: View {
         } else {
             LazyVStack(spacing: 0) {
                 ForEach(viewModel.filtered) { coffee in
-                    NavigationLink(value: coffee) {
-                        CoffeeListRow(coffee: coffee, palette: palette)
-                    }
-                    .buttonStyle(.plain)
+                    SwipeableCoffeeRow(
+                        coffee: coffee,
+                        palette: palette,
+                        openId: $swipeOpenId,
+                        onEdit: { editingCoffee = coffee },
+                        onDelete: {
+                            deleteError = nil
+                            deletingCoffee = coffee
+                        }
+                    )
                 }
             }
             .padding(.top, 8)

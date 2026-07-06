@@ -27,7 +27,8 @@ struct ScanFlowView: View {
                 ReviewView(
                     viewModel: viewModel,
                     onAdd: onAdd,
-                    onRetake: { viewModel.retake() }
+                    onRetake: { viewModel.retake() },
+                    onClose: onClose
                 )
             }
         }

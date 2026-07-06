@@ -1,7 +1,52 @@
 import SwiftUI
 
-/// The "Ask AI" tab of the Insights screen: empty state with suggested
-/// questions, chat thread, and a composer pinned above the tab bar.
+/// Ask AI as its own full-screen chat, opened from the floating button on
+/// the Insights screen (it was previously an Insights tab).
+struct AskAIScreen: View {
+    @Environment(ThemeStore.self) private var themeStore
+    @Environment(\.dismiss) private var dismiss
+    @Bindable var viewModel: AskAIViewModel
+    let metaLine: String
+
+    var body: some View {
+        let palette = themeStore.palette
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text("Ask AI")
+                    .font(.app(26, weight: .bold))
+                    .tracking(-0.6)
+                    .foregroundStyle(palette.fg)
+                Spacer()
+                Button {
+                    dismiss()
+                } label: {
+                    Circle()
+                        .fill(palette.surface)
+                        .frame(width: 36, height: 36)
+                        .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                        .overlay(
+                            Image(systemName: "xmark")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(palette.fg)
+                        )
+                }
+                .buttonStyle(PressScaleButtonStyle())
+            }
+            Text(metaLine)
+                .font(.app(13, weight: .medium))
+                .foregroundStyle(palette.muted)
+                .padding(.top, 6)
+
+            AskAIView(viewModel: viewModel, palette: palette)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 14)
+        .background(palette.bg)
+    }
+}
+
+/// The chat body: empty state with suggested questions, message thread,
+/// and a composer pinned to the bottom.
 struct AskAIView: View {
     @Bindable var viewModel: AskAIViewModel
     let palette: Palette
