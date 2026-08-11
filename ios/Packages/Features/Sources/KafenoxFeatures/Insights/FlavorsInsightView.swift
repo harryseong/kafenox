@@ -21,7 +21,7 @@ struct FlavorsInsightView: View {
     private var familyBars: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("By flavor family")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
                 .padding(.top, 22)
 
@@ -40,12 +40,12 @@ struct FlavorsInsightView: View {
                 HStack(spacing: 8) {
                     Circle().fill(stat.family.color).frame(width: 9, height: 9)
                     Text(stat.family.name)
-                        .font(.app(14.5, weight: .semibold))
+                        .appFont(14.5, weight: .semibold)
                         .foregroundStyle(palette.fg)
                 }
                 Spacer()
                 Text("\(stat.total) \(stat.total == 1 ? "note" : "notes")")
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .monospacedDigit()
                     .foregroundStyle(palette.muted)
             }
@@ -65,7 +65,7 @@ struct FlavorsInsightView: View {
     private var commonNotes: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Most common notes")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
                 .padding(.top, 24)
 
@@ -85,15 +85,15 @@ struct FlavorsInsightView: View {
                 .frame(width: 30, height: 30)
             VStack(alignment: .leading, spacing: 3) {
                 Text(stat.note)
-                    .font(.app(15, weight: .semibold))
+                    .appFont(15, weight: .semibold)
                     .foregroundStyle(palette.fg)
                 Text(stat.family.name)
-                    .font(.app(11, weight: .medium))
+                    .appFont(11, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
             Spacer()
             Text("\(stat.count) \(stat.count == 1 ? "coffee" : "coffees")")
-                .font(.app(12, weight: .medium))
+                .appFont(12, weight: .medium)
                 .monospacedDigit()
                 .foregroundStyle(palette.muted)
         }

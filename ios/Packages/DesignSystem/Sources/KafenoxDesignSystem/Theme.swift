@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// The two palettes from the Claude Design v3 prototype's theme tokens.
 public enum Theme: String, CaseIterable, Sendable {
@@ -67,47 +66,75 @@ public struct PressScaleButtonStyle: ButtonStyle {
         self.scale = scale
     }
 
+    // A ButtonStyle can't read @Environment itself, so the label goes through
+    // a nested View that can.
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? scale : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        ScaleBody(configuration: configuration, scale: scale)
+    }
+
+    private struct ScaleBody: View {
+        let configuration: Configuration
+        let scale: CGFloat
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+        var body: some View {
+            configuration.label
+                .scaleEffect(reduceMotion || !configuration.isPressed ? 1 : scale)
+                .animation(reduceMotion ? nil : .easeOut(duration: 0.12), value: configuration.isPressed)
+        }
     }
 }
 
 /// v3 dropped the custom Hanken Grotesk / DM Mono pairing for the platform
 /// system stack -- everything is the system font differentiated by size,
-/// weight, and tracking. `app` mirrors the design's px sizes 1:1.
+/// weight, and tracking. `appFont` mirrors the design's px sizes 1:1.
 ///
-/// The design's sizes are absolute, but `Font.system(size:)` on its own is a
-/// *fixed* size that ignores Dynamic Type -- text stayed put at accessibility
-/// sizes. Running each size through `UIFontMetrics` keeps the design's
-/// proportions while still honoring the reader's preferred content size.
+/// It is a view modifier rather than a `Font` factory on purpose. The design's
+/// sizes are absolute, and `Font.system(size:)` is a *fixed* size that ignores
+/// Dynamic Type entirely. Computing a scaled size eagerly (via `UIFontMetrics`)
+/// does scale the text, but resolves once at body-evaluation time, so changing
+/// the system text size while the app runs has no effect until relaunch.
+/// `@ScaledMetric` is a `DynamicProperty`, so it re-reads the environment and
+/// the text resizes live.
 ///
-/// Each size is scaled against the system text style closest to it, because
-/// Apple's curves differ by role: a caption grows far more than a large
-/// title. Scaling everything against `.body` made mastheads balloon off the
-/// screen at accessibility sizes while small print stayed cramped.
-///
-/// Known limitation: `UIFontMetrics` resolves at body-evaluation time, so a
-/// content-size change made while the app is running applies on next launch.
-extension Font {
-    public static func app(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        let scaled = UIFontMetrics(forTextStyle: metricsStyle(for: size)).scaledValue(for: size)
-        return .system(size: scaled, weight: weight)
+/// Each size scales against the system text style closest to it, because
+/// Apple's curves differ by role: a caption grows far more than a large title.
+/// Scaling everything against `.body` made mastheads balloon off the screen at
+/// accessibility sizes while small print stayed cramped.
+private struct AppFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+    private let weight: Font.Weight
+
+    init(size: CGFloat, weight: Font.Weight) {
+        // `relativeTo` is fixed at init, which is fine -- it only needs to
+        // depend on the design size, not on anything that changes later.
+        _size = ScaledMetric(wrappedValue: size, relativeTo: Self.textStyle(for: size))
+        self.weight = weight
     }
 
-    private static func metricsStyle(for size: CGFloat) -> UIFont.TextStyle {
+    func body(content: Content) -> some View {
+        content.font(.system(size: size, weight: weight))
+    }
+
+    private static func textStyle(for size: CGFloat) -> Font.TextStyle {
         switch size {
         case ..<12: .caption2
-        case ..<13: .caption1
+        case ..<13: .caption
         case ..<14: .footnote
         case ..<16: .subheadline
         case ..<17: .callout
         case ..<20: .body
         case ..<23: .title3
         case ..<29: .title2
-        case ..<35: .title1
+        case ..<35: .title
         default: .largeTitle
         }
+    }
+}
+
+extension View {
+    /// Applies the app's type ramp at a design size, scaled for Dynamic Type.
+    public func appFont(_ size: CGFloat, weight: Font.Weight = .regular) -> some View {
+        modifier(AppFont(size: size, weight: weight))
     }
 }

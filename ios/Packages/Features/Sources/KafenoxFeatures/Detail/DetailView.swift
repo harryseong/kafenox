@@ -22,7 +22,7 @@ struct DetailView: View {
                 header(coffee: coffee, palette: palette)
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
-                        .font(.app(13, weight: .semibold))
+                        .appFont(13, weight: .semibold)
                         .foregroundStyle(Palette.error)
                         .padding(.top, 14)
                 }
@@ -180,11 +180,11 @@ struct DetailView: View {
                 .frame(width: 46, height: 46)
             VStack(alignment: .leading, spacing: 4) {
                 Text(coffee.coffeeName ?? "Untitled")
-                    .font(.app(22, weight: .bold))
+                    .appFont(22, weight: .bold)
                     .tracking(-0.5)
                     .foregroundStyle(palette.fg)
                 Text(subtitle(for: coffee))
-                    .font(.app(13, weight: .medium))
+                    .appFont(13, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
         }
@@ -209,11 +209,11 @@ struct DetailView: View {
                 .controlSize(.regular)
                 .tint(palette.muted)
             Text("Reading the label")
-                .font(.app(15, weight: .semibold))
+                .appFont(15, weight: .semibold)
                 .accessibilityAddTraits(.updatesFrequently)
                 .foregroundStyle(palette.fg)
             Text("This usually takes a few seconds. We'll notify you when it's ready to review.")
-                .font(.app(13))
+                .appFont(13)
                 .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
         }
@@ -229,16 +229,16 @@ struct DetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .lastTextBaseline) {
                 Text("Your rating")
-                    .font(.app(12, weight: .semibold))
+                    .appFont(12, weight: .semibold)
                     .foregroundStyle(palette.muted)
                 Spacer()
                 Text(coffee.rating.map { "\($0)" } ?? "—")
-                    .font(.app(28, weight: .bold))
+                    .appFont(28, weight: .bold)
                     .tracking(-0.5)
                     .monospacedDigit()
                     .foregroundStyle(palette.fg)
                 Text(" / 10")
-                    .font(.app(13, weight: .semibold))
+                    .appFont(13, weight: .semibold)
                     .foregroundStyle(palette.muted)
             }
             HStack(spacing: 3) {
@@ -269,7 +269,7 @@ struct DetailView: View {
             }
             if coffee.rating == nil {
                 Text("Tap a segment to rate your first cup")
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .foregroundStyle(palette.muted)
                     .padding(.top, -2)
             }
@@ -283,12 +283,12 @@ struct DetailView: View {
     private func flavorSection(coffee: Coffee, palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Flavor notes")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
             FlowLayout(spacing: 7) {
                 ForEach(coffee.flavorNotes, id: \.self) { note in
                     Text(note)
-                        .font(.app(13, weight: .medium))
+                        .appFont(13, weight: .medium)
                         .foregroundStyle(palette.fg)
                         .padding(.horizontal, 13)
                         .padding(.vertical, 7)
@@ -302,14 +302,14 @@ struct DetailView: View {
     private func detailRows(coffee: Coffee, palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Details")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
                 .padding(.bottom, 4)
 
             detailRow(label: "Roast level", palette: palette) {
                 HStack(spacing: 10) {
                     Text(coffee.roastLevel?.capitalized ?? "—")
-                        .font(.app(14, weight: .semibold))
+                        .appFont(14, weight: .semibold)
                         .foregroundStyle(palette.fg)
                     ZStack(alignment: .leading) {
                         Capsule().fill(palette.surface2)
@@ -332,7 +332,7 @@ struct DetailView: View {
     private func detailRow(label: String, value: String?, palette: Palette) -> some View {
         detailRow(label: label, palette: palette) {
             Text(value ?? "—")
-                .font(.app(14, weight: .semibold))
+                .appFont(14, weight: .semibold)
                 .foregroundStyle(palette.fg)
         }
     }
@@ -340,7 +340,7 @@ struct DetailView: View {
     private func detailRow(label: String, palette: Palette, @ViewBuilder trailing: () -> some View) -> some View {
         HStack(alignment: .center, spacing: 14) {
             Text(label)
-                .font(.app(13.5))
+                .appFont(13.5)
                 .foregroundStyle(palette.muted)
             Spacer()
             trailing()
@@ -352,7 +352,7 @@ struct DetailView: View {
 
     private func tastingNote(coffee: Coffee, palette: Palette) -> some View {
         Text(notesText(coffee))
-            .font(.app(15))
+            .appFont(15)
             .foregroundStyle(palette.fg)
             .lineSpacing(5)
             .padding(.top, 24)

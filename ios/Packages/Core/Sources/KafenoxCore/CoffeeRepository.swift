@@ -7,7 +7,7 @@ import Foundation
 public protocol CoffeeRepository: Sendable {
     func listCoffees() async throws -> [Coffee]
     func coffee(photoId: String) async throws -> Coffee
-    func updateCoffee(photoId: String, fields: [String: Sendable]) async throws -> Coffee
+    func updateCoffee(photoId: String, _ update: CoffeeUpdate) async throws -> Coffee
     /// "Looks good" -- confirms an extracted coffee as-is, without edits.
     func verifyCoffee(photoId: String) async throws -> Coffee
     func deleteCoffee(photoId: String) async throws
@@ -42,7 +42,7 @@ public struct UploadStatus: Decodable, Sendable {
     }
 }
 
-public struct ChatTurn: Sendable {
+public struct ChatTurn: Sendable, Equatable {
     public let role: String
     public let text: String
 

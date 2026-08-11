@@ -25,7 +25,7 @@ struct KafenoxTabBar: View {
                         )
                         .shadow(color: palette.shadow, radius: 9, y: 4)
                     Text("Scan")
-                        .font(.app(10, weight: .semibold))
+                        .appFont(10, weight: .semibold)
                         .foregroundStyle(palette.fg)
                 }
                 .frame(maxWidth: .infinity)
@@ -51,7 +51,7 @@ struct KafenoxTabBar: View {
             VStack(spacing: 5) {
                 Image(systemName: systemImage).font(.system(size: 21))
                 Text(label)
-                    .font(.app(10, weight: .semibold))
+                    .appFont(10, weight: .semibold)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }

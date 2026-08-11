@@ -17,14 +17,14 @@ struct CoffeeGridCard: View {
                     StatusBadgeView(kind: badge, palette: palette)
                 } else {
                     Text(ratingText)
-                        .font(.app(12, weight: .semibold))
+                        .appFont(12, weight: .semibold)
                         .monospacedDigit()
                         .foregroundStyle(palette.muted)
                 }
             }
 
             Text(coffee.coffeeName ?? "Untitled")
-                .font(.app(16.5, weight: .semibold))
+                .appFont(16.5, weight: .semibold)
                 .tracking(-0.3)
                 .foregroundStyle(palette.fg)
                 .lineLimit(2)
@@ -32,14 +32,14 @@ struct CoffeeGridCard: View {
                 .padding(.top, 2)
 
             Text(coffee.roaster ?? subtitleFallback)
-                .font(.app(12, weight: .medium))
+                .appFont(12, weight: .medium)
                 .foregroundStyle(palette.muted)
                 .lineLimit(1)
 
             Spacer(minLength: 0)
 
             Text(coffee.flavorNotes.joined(separator: ", "))
-                .font(.app(11.5))
+                .appFont(11.5)
                 .foregroundStyle(palette.muted)
                 .lineLimit(2)
                 .lineSpacing(2)

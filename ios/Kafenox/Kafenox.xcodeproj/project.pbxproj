@@ -26,7 +26,7 @@
 		654C2AF915808DC603B31092 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9BAB50C03E1CE2E68639D318 /* Core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Core; path = ../Packages/Core; sourceTree = SOURCE_ROOT; };
 		B53E6019FDCEB8D496D78CAC /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		B60123D4A28F6191ED10565B /* Kafenox.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Kafenox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B60123D4A28F6191ED10565B /* Kafenox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kafenox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7C6AC9B00FD1642555BA49B /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		CBE1749D8F9AA80ADD34CBCB /* KafenoxTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafenoxTabBar.swift; sourceTree = "<group>"; };
 		E80D100AF267DBA326C0B68C /* Networking */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Networking; path = ../Packages/Networking; sourceTree = SOURCE_ROOT; };
@@ -148,8 +148,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 574C6B51350AE1054413DD9D /* Build configuration list for PBXProject "Kafenox" */;
 			developmentRegion = en;
@@ -206,6 +204,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 58X4KZR8S6;
 				INFOPLIST_FILE = Kafenox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -220,6 +219,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 58X4KZR8S6;
 				INFOPLIST_FILE = Kafenox/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

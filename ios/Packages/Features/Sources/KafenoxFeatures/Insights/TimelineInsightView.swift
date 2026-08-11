@@ -38,16 +38,16 @@ struct TimelineInsightView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline, spacing: 9) {
                     Text(group.label)
-                        .font(.app(16.5, weight: .bold))
+                        .appFont(16.5, weight: .bold)
                         .tracking(-0.3)
                         .foregroundStyle(palette.fg)
                     Text(group.agoLabel)
-                        .font(.app(12, weight: .medium))
+                        .appFont(12, weight: .medium)
                         .foregroundStyle(palette.muted)
                         .lineLimit(1)
                     Spacer(minLength: 10)
                     Text("\(group.coffees.count) \(group.coffees.count == 1 ? "coffee" : "coffees")")
-                        .font(.app(11.5, weight: .semibold))
+                        .appFont(11.5, weight: .semibold)
                         .foregroundStyle(palette.muted)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 10)
@@ -74,23 +74,23 @@ struct TimelineInsightView: View {
                     .frame(width: 36, height: 36)
                     .overlay(
                         Text(coffee.initials)
-                            .font(.app(12, weight: .bold))
+                            .appFont(12, weight: .bold)
                             .foregroundStyle(.white)
                     )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(coffee.coffeeName ?? "Unknown coffee")
-                        .font(.app(15, weight: .semibold))
+                        .appFont(15, weight: .semibold)
                         .tracking(-0.2)
                         .foregroundStyle(palette.fg)
                         .lineLimit(1)
                     Text(subtitle(for: coffee))
-                        .font(.app(12, weight: .medium))
+                        .appFont(12, weight: .medium)
                         .foregroundStyle(palette.muted)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 8)
                 Text(coffee.rating.map { "\($0)" } ?? "—")
-                    .font(.app(13.5, weight: .bold))
+                    .appFont(13.5, weight: .bold)
                     .monospacedDigit()
                     .foregroundStyle(palette.fg)
             }
@@ -98,7 +98,7 @@ struct TimelineInsightView: View {
             FlowRowLine(spacing: 6) {
                 if let roast = coffee.roastLevel {
                     Text("\(roast) roast")
-                        .font(.app(11, weight: .semibold))
+                        .appFont(11, weight: .semibold)
                         .foregroundStyle(palette.fg)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 9)
@@ -106,7 +106,7 @@ struct TimelineInsightView: View {
                 }
                 ForEach(coffee.flavorNotes.prefix(3), id: \.self) { note in
                     Text(note)
-                        .font(.app(11, weight: .medium))
+                        .appFont(11, weight: .medium)
                         .foregroundStyle(palette.muted)
                         .padding(.vertical, 3)
                         .padding(.horizontal, 9)

@@ -77,19 +77,44 @@ faked by a hand-written actor stub rather than a mocking framework.
 
 None. Everything is URLSession, SwiftUI, MapKit, and UserNotifications.
 
+## Accessibility
+
+Most of the UI is custom, so the semantics are explicit rather than inherited —
+see [ADR 0004](docs/adr/0004-accessibility-approach.md). None of it is covered
+by the test suite, so after touching UI, check by hand:
+
+```bash
+# Type must resize live, without relaunching -- that's the whole point of
+# .appFont being a @ScaledMetric modifier rather than a Font factory.
+xcrun simctl ui booted content_size accessibility-extra-extra-extra-large
+xcrun simctl ui booted content_size large            # back to default
+
+# Reduce Motion: the scan screen's sweep and spinner should hold still.
+xcrun simctl spawn booted defaults write com.apple.Accessibility ReduceMotionEnabled -bool true
+```
+
+With VoiceOver on, a catalog row must announce as a button, open on activation,
+and offer Edit and Delete as actions; every field on the Edit screen must
+announce its own name.
+
 ## Known gaps
 
 - **Scan completion notifications are local, not push.** They fire while the
   app is alive (foreground, or the ~30s `beginBackgroundTask` window). If the
   app is terminated mid-extraction nothing fires; the coffee just shows as
   "New" on next launch. Real push would need APNs plus backend infrastructure.
-- **Dynamic Type applies at launch.** `Font.app` scales design sizes through
-  `UIFontMetrics`, which resolves at body-evaluation time, so changing the
-  system text size while the app is running takes effect on next launch.
-  Fixing it properly means converting the font helper to a `@ScaledMetric`
-  view modifier across every call site.
 - **No UI tests.** Critical flows (scan → queued, catalog → detail → verify)
-  are only covered at the view-model level.
+  are only covered at the view-model level, and accessibility is verified by
+  hand.
 - **`list_coffees` scans DynamoDB.** Fine at a few hundred bags; revisit with
   GSIs past ~5-10k items.
 - **Failed extractions have no retry.** Delete and rescan is the only path.
+
+## On the committed API URL
+
+`Config/Debug.xcconfig` contains a real API Gateway URL, and this repo is
+public. That is deliberate and safe: the URL is not a credential. Every request
+needs an `x-api-key` header whose value lives only in the Keychain and is never
+committed, and the usage plan throttles at 50 rps / 100 burst, so the endpoint
+cannot be used to read data or run up meaningful cost. A hard monthly quota
+would be reasonable defense-in-depth if the endpoint ever gets attention.

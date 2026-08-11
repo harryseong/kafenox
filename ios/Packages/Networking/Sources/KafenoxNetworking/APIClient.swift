@@ -107,15 +107,15 @@ public actor APIClient: CoffeeRepository {
         try decode(UploadStatus.self, from: await request("uploads/\(photoId)/status"))
     }
 
-    public func updateCoffee(photoId: String, fields: [String: Sendable]) async throws -> Coffee {
-        let body = try JSONSerialization.data(withJSONObject: fields)
+    public func updateCoffee(photoId: String, _ update: CoffeeUpdate) async throws -> Coffee {
+        let body = try JSONSerialization.data(withJSONObject: update.payload)
         return try decode(Coffee.self, from: await request("coffees/\(photoId)", method: "PATCH", body: body))
     }
 
     /// "Looks good" -- confirms an extracted coffee as-is, without edits.
     /// The backend treats `verified` as a flag, not an editable field.
     public func verifyCoffee(photoId: String) async throws -> Coffee {
-        try await updateCoffee(photoId: photoId, fields: ["verified": true])
+        try await updateCoffee(photoId: photoId, CoffeeUpdate(verified: true))
     }
 
     public func deleteCoffee(photoId: String) async throws {

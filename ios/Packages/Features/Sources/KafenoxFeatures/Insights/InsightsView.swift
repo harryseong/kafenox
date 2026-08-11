@@ -106,13 +106,13 @@ public struct InsightsView: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Insights")
-                    .font(.app(32, weight: .bold))
+                    .appFont(32, weight: .bold)
                     .tracking(-0.8)
                     .foregroundStyle(palette.fg)
                     .lineLimit(2)
                     .minimumScaleFactor(0.6)
                 Text(metaLine)
-                    .font(.app(13, weight: .medium))
+                    .appFont(13, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
             Spacer()
@@ -130,7 +130,7 @@ public struct InsightsView: View {
                         section = item
                     } label: {
                         Text(item.rawValue)
-                            .font(.app(13, weight: .semibold))
+                            .appFont(13, weight: .semibold)
                             .foregroundStyle(active ? palette.bg : palette.muted)
                             .padding(.vertical, 7)
                             .padding(.horizontal, 15)
@@ -164,17 +164,17 @@ public struct InsightsView: View {
             HStack(spacing: 8) {
                 Circle().stroke(palette.muted, lineWidth: 1).frame(width: 8, height: 8)
                 Text("fewer coffees")
-                    .font(.app(11, weight: .medium))
+                    .appFont(11, weight: .medium)
                     .foregroundStyle(palette.muted)
                 Circle().stroke(palette.muted, lineWidth: 1).frame(width: 15, height: 15).padding(.leading, 4)
                 Text("more coffees")
-                    .font(.app(11, weight: .medium))
+                    .appFont(11, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
             .padding(.top, 12)
 
             Text("Most-brewed origins")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
                 .padding(.top, 22)
 
@@ -191,11 +191,11 @@ public struct InsightsView: View {
         VStack(spacing: 6) {
             HStack {
                 Text(origin.country)
-                    .font(.app(14.5, weight: .semibold))
+                    .appFont(14.5, weight: .semibold)
                     .foregroundStyle(palette.fg)
                 Spacer()
                 Text("\(origin.count) \(origin.count == 1 ? "coffee" : "coffees")")
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .monospacedDigit()
                     .foregroundStyle(palette.muted)
             }
@@ -220,7 +220,7 @@ struct CompactHeaderBar: View {
 
     var body: some View {
         Text(title)
-            .font(.app(15.5, weight: .bold))
+            .appFont(15.5, weight: .bold)
             .tracking(-0.2)
             .foregroundStyle(palette.fg)
             .frame(maxWidth: .infinity)

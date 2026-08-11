@@ -37,7 +37,7 @@ struct SwipeableCoffeeRow: View {
                     onEdit()
                 }) {
                     Text("Edit")
-                        .font(.app(12.5, weight: .semibold))
+                        .appFont(12.5, weight: .semibold)
                         .foregroundStyle(palette.fg)
                         .frame(width: 64)
                         .frame(maxHeight: .infinity)
@@ -49,7 +49,7 @@ struct SwipeableCoffeeRow: View {
                     onDelete()
                 }) {
                     Text("Delete")
-                        .font(.app(12.5, weight: .semibold))
+                        .appFont(12.5, weight: .semibold)
                         .foregroundStyle(.white)
                         .frame(width: 64)
                         .frame(maxHeight: .infinity)
@@ -57,6 +57,10 @@ struct SwipeableCoffeeRow: View {
                 }
                 .buttonStyle(.plain)
             }
+            // Reachable only by dragging, so they are exposed to VoiceOver as
+            // actions on the row itself (below) rather than announced here as
+            // buttons the user has no way to reach.
+            .accessibilityHidden(true)
 
             // Deliberately NOT a NavigationLink/Button: buttons fire on
             // touch-up even when that touch was a horizontal swipe, which
@@ -95,6 +99,13 @@ struct SwipeableCoffeeRow: View {
                             }
                         }
                 )
+                // Neither the tap gesture nor the drag is reachable with
+                // VoiceOver, which would otherwise leave the row readable but
+                // impossible to open, edit, or delete.
+                .accessibilityAddTraits(.isButton)
+                .accessibilityAction { onOpen() }
+                .accessibilityAction(named: "Edit") { onEdit() }
+                .accessibilityAction(named: "Delete") { onDelete() }
         }
         .clipped()
     }
@@ -112,12 +123,12 @@ struct CoffeeListRow: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(coffee.coffeeName ?? "Untitled")
-                    .font(.app(15.5, weight: .semibold))
+                    .appFont(15.5, weight: .semibold)
                     .tracking(-0.2)
                     .foregroundStyle(palette.fg)
                     .lineLimit(1)
                 Text(subtitle)
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .foregroundStyle(palette.muted)
                     .lineLimit(1)
             }
@@ -128,7 +139,7 @@ struct CoffeeListRow: View {
                 StatusBadgeView(kind: badge, palette: palette)
             } else {
                 Text(ratingText)
-                    .font(.app(13, weight: .semibold))
+                    .appFont(13, weight: .semibold)
                     .monospacedDigit()
                     .foregroundStyle(palette.muted)
             }

@@ -7,6 +7,7 @@ import SwiftUI
 struct QueuedConfirmationView: View {
     var onDone: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
 
     var body: some View {
@@ -22,18 +23,22 @@ struct QueuedConfirmationView: View {
                     .opacity(appeared ? 1 : 0)
 
                 Text("Added to the queue")
-                    .font(.app(18, weight: .semibold))
+                    .appFont(18, weight: .semibold)
                     .foregroundStyle(.white)
 
                 Text("We'll read the label in the background and let you know when it's ready.")
-                    .font(.app(13))
+                    .appFont(13)
                     .foregroundStyle(.white.opacity(0.5))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
             }
         }
         .task {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { appeared = true }
+            if reduceMotion {
+                appeared = true
+            } else {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) { appeared = true }
+            }
             try? await Task.sleep(for: .milliseconds(1300))
             onDone()
         }

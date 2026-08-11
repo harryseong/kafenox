@@ -206,6 +206,35 @@ struct CatalogMutationTests {
         #expect(model.coffees.isEmpty)
     }
 
+    @Test("Deleting removes the row and tells the backend")
+    func deleteRemovesRow() async throws {
+        let repo = StubCoffeeRepository()
+        await repo.setList(.success([makeCoffee("a"), makeCoffee("b")]))
+        let model = makeModel(repository: repo)
+        await model.load()
+
+        try await model.delete(photoId: "a")
+
+        #expect(model.coffees.map(\.photoId) == ["b"])
+        #expect(await repo.deletedPhotoIds == ["a"])
+    }
+
+    /// The confirmation sheet needs the throw to stay open and show the error,
+    /// and the row must survive so the user can retry.
+    @Test("A failed delete rethrows and keeps the row")
+    func deleteFailureKeepsRow() async {
+        let repo = StubCoffeeRepository()
+        await repo.setList(.success([makeCoffee("a")]))
+        await repo.setDeleteFailing(true)
+        let model = makeModel(repository: repo)
+        await model.load()
+
+        await #expect(throws: (any Error).self) {
+            try await model.delete(photoId: "a")
+        }
+        #expect(model.coffees.map(\.photoId) == ["a"])
+    }
+
     @Test("Meta line switches to a filtered count while filtering")
     func metaLine() async {
         let repo = StubCoffeeRepository()

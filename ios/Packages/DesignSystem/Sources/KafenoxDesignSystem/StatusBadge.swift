@@ -40,7 +40,7 @@ public struct StatusBadgeView: View {
                     .tint(palette.muted)
             }
             Text(label)
-                .font(.app(11, weight: .semibold))
+                .appFont(11, weight: .semibold)
                 .foregroundStyle(foreground)
         }
         .padding(.horizontal, 9)

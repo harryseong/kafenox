@@ -14,6 +14,9 @@ struct EditCoffeeView: View {
     let coffee: Coffee
     var onSave: (Coffee) -> Void
 
+    private let repository: any CoffeeRepository
+    private let settings: SettingsStore
+
     @State private var draftRoaster: String
     @State private var draftName: String
     @State private var draftCountry: String
@@ -33,8 +36,15 @@ struct EditCoffeeView: View {
         ("medium-dark", "Medium-dark"), ("dark", "Dark"),
     ]
 
-    init(coffee: Coffee, onSave: @escaping (Coffee) -> Void) {
+    init(
+        coffee: Coffee,
+        repository: any CoffeeRepository = APIClient.shared,
+        settings: SettingsStore = .shared,
+        onSave: @escaping (Coffee) -> Void
+    ) {
         self.coffee = coffee
+        self.repository = repository
+        self.settings = settings
         self.onSave = onSave
         _draftRoaster = State(initialValue: coffee.roaster ?? "")
         _draftName = State(initialValue: coffee.coffeeName ?? "")
@@ -56,7 +66,7 @@ struct EditCoffeeView: View {
                 fields(palette: palette)
                 if let saveError {
                     Text(saveError)
-                        .font(.app(13, weight: .semibold))
+                        .appFont(13, weight: .semibold)
                         .foregroundStyle(Palette.error)
                         .padding(.top, 12)
                 }
@@ -72,7 +82,7 @@ struct EditCoffeeView: View {
     private func header(palette: Palette) -> some View {
         HStack {
             Text("Edit coffee")
-                .font(.app(26, weight: .bold))
+                .appFont(26, weight: .bold)
                 .tracking(-0.6)
                 .foregroundStyle(palette.fg)
             Spacer()
@@ -101,10 +111,10 @@ struct EditCoffeeView: View {
                 .frame(width: 38, height: 38)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Editing")
-                    .font(.app(11, weight: .semibold))
+                    .appFont(11, weight: .semibold)
                     .foregroundStyle(palette.muted)
                 Text(draftName.isEmpty ? "Untitled" : draftName)
-                    .font(.app(16, weight: .semibold))
+                    .appFont(16, weight: .semibold)
                     .foregroundStyle(palette.fg)
             }
         }
@@ -136,15 +146,20 @@ struct EditCoffeeView: View {
     private func field(_ label: String, text: Binding<String>, palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
+                // The caption above is the field's visible label, but it's a
+                // sibling view -- without this the field announces as an
+                // anonymous "text field".
+                .accessibilityHidden(true)
             TextField("", text: text)
-                .font(.app(14.5, weight: .medium))
+                .appFont(14.5, weight: .medium)
                 .foregroundStyle(palette.fg)
                 .padding(.horizontal, 13)
                 .padding(.vertical, 11)
                 .background(palette.surface, in: RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.line, lineWidth: 1))
+                .accessibilityLabel(label)
         }
         .frame(maxWidth: .infinity)
     }
@@ -152,7 +167,7 @@ struct EditCoffeeView: View {
     private func roastLevelPicker(palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Roast level")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 7) {
@@ -162,7 +177,7 @@ struct EditCoffeeView: View {
                             draftRoastLevel = value
                         } label: {
                             Text(label)
-                                .font(.app(13, weight: .semibold))
+                                .appFont(13, weight: .semibold)
                                 .foregroundStyle(active ? palette.bg : palette.muted)
                                 .padding(.horizontal, 15)
                                 .padding(.vertical, 7)
@@ -178,13 +193,13 @@ struct EditCoffeeView: View {
     private func flavorNotesEditor(palette: Palette) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Flavor notes")
-                .font(.app(12, weight: .semibold))
+                .appFont(12, weight: .semibold)
                 .foregroundStyle(palette.muted)
             FlowLayout(spacing: 7) {
                 ForEach(draftFlavorNotes, id: \.self) { note in
                     HStack(spacing: 7) {
                         Text(note)
-                            .font(.app(13, weight: .medium))
+                            .appFont(13, weight: .medium)
                             .foregroundStyle(palette.fg)
                         Button {
                             draftFlavorNotes.removeAll { $0 == note }
@@ -194,17 +209,24 @@ struct EditCoffeeView: View {
                                 .foregroundStyle(palette.muted)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Remove \(note)")
+                        .accessibilityHidden(true)
                     }
                     .padding(.leading, 13)
                     .padding(.trailing, 6)
                     .padding(.vertical, 6)
                     .background(palette.surface2, in: Capsule())
+                    // One element per chip: the note and its remove control
+                    // read together instead of as two unrelated stops.
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(note)
+                    .accessibilityAction(named: "Remove") {
+                        draftFlavorNotes.removeAll { $0 == note }
+                    }
                 }
 
                 HStack(spacing: 6) {
                     TextField("Add note", text: $flavorInput)
-                        .font(.app(13, weight: .medium))
+                        .appFont(13, weight: .medium)
                         .foregroundStyle(palette.fg)
                         .frame(width: 74)
                         .onSubmit(addFlavor)
@@ -245,7 +267,7 @@ struct EditCoffeeView: View {
                 dismiss()
             } label: {
                 Text("Cancel")
-                    .font(.app(14.5, weight: .semibold))
+                    .appFont(14.5, weight: .semibold)
                     .foregroundStyle(palette.fg)
                     .padding(.horizontal, 22)
                     .frame(height: 48)
@@ -261,7 +283,7 @@ struct EditCoffeeView: View {
                         ProgressView().tint(palette.bg)
                     } else {
                         Text("Save changes")
-                            .font(.app(14.5, weight: .semibold))
+                            .appFont(14.5, weight: .semibold)
                             .foregroundStyle(palette.bg)
                     }
                 }
@@ -277,19 +299,19 @@ struct EditCoffeeView: View {
 
     @MainActor
     private func save() async {
-        var changed: [String: Sendable] = [:]
-        if draftRoaster != (coffee.roaster ?? "") { changed["roaster"] = draftRoaster }
-        if draftName != (coffee.coffeeName ?? "") { changed["coffeeName"] = draftName }
-        if draftCountry != (coffee.originCountry ?? "") { changed["originCountry"] = draftCountry }
-        if draftRegion != (coffee.originRegion ?? "") { changed["originRegion"] = draftRegion }
-        if draftProcess != (coffee.process ?? "") { changed["process"] = draftProcess }
-        if draftVariety != (coffee.variety ?? "") { changed["variety"] = draftVariety }
-        if draftRoastDate != (coffee.roastDate ?? "") { changed["roastDate"] = draftRoastDate }
-        if draftRoastLevel != (coffee.roastLevel ?? "") { changed["roastLevel"] = draftRoastLevel }
+        var changed = CoffeeUpdate()
+        if draftRoaster != (coffee.roaster ?? "") { changed.roaster = draftRoaster }
+        if draftName != (coffee.coffeeName ?? "") { changed.coffeeName = draftName }
+        if draftCountry != (coffee.originCountry ?? "") { changed.originCountry = draftCountry }
+        if draftRegion != (coffee.originRegion ?? "") { changed.originRegion = draftRegion }
+        if draftProcess != (coffee.process ?? "") { changed.process = draftProcess }
+        if draftVariety != (coffee.variety ?? "") { changed.variety = draftVariety }
+        if draftRoastDate != (coffee.roastDate ?? "") { changed.roastDate = draftRoastDate }
+        if draftRoastLevel != (coffee.roastLevel ?? "") { changed.roastLevel = draftRoastLevel }
         if draftFlavorNotes != coffee.flavorNotes {
-            changed["flavorNotes"] = draftFlavorNotes
+            changed.flavorNotes = draftFlavorNotes
             // Settings-selected model for categorizing any new notes.
-            changed["model"] = SettingsStore.shared.model(for: .notes).rawValue
+            changed.model = settings.model(for: .notes).rawValue
         }
 
         guard !changed.isEmpty else {
@@ -301,7 +323,7 @@ struct EditCoffeeView: View {
         saveError = nil
         defer { isSaving = false }
         do {
-            let updated = try await APIClient.shared.updateCoffee(photoId: coffee.photoId, fields: changed)
+            let updated = try await repository.updateCoffee(photoId: coffee.photoId, changed)
             onSave(updated)
             dismiss()
         } catch {

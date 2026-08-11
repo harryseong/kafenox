@@ -68,7 +68,7 @@ public struct SideMenuView: View {
                 }
 
                 Text("Menu")
-                    .font(.app(12, weight: .semibold))
+                    .appFont(12, weight: .semibold)
                     .foregroundStyle(palette.muted)
                     .padding(.horizontal, 12)
                     .padding(.top, 14)
@@ -79,7 +79,7 @@ public struct SideMenuView: View {
                             .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(palette.fg)
                         Text("Settings")
-                            .font(.app(14.5, weight: .semibold))
+                            .appFont(14.5, weight: .semibold)
                             .tracking(-0.2)
                             .foregroundStyle(palette.fg)
                         Spacer()

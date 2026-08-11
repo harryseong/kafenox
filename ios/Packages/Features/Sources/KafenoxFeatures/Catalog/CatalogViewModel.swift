@@ -103,6 +103,19 @@ public final class CatalogViewModel {
         coffees.removeAll { $0.photoId == photoId }
     }
 
+    /// Deletes server-side, then drops the row. Throwing lets the caller keep
+    /// its confirmation sheet open and show the failure.
+    @MainActor
+    public func delete(photoId: String) async throws {
+        do {
+            try await repository.deleteCoffee(photoId: photoId)
+        } catch {
+            Logger.catalog.error("Deleting \(photoId, privacy: .public) failed: \(error)")
+            throw error
+        }
+        remove(photoId: photoId)
+    }
+
     public func toggleLayout() {
         layout = layout == .grid ? .list : .grid
     }

@@ -24,9 +24,17 @@ public final class ScanViewModel {
     public var photoId: String?
 
     private let repository: any CoffeeRepository
+    private let settings: SettingsStore
+    private let uploadQueue: UploadQueueMonitor
 
-    public init(repository: any CoffeeRepository = APIClient.shared) {
+    public init(
+        repository: any CoffeeRepository = APIClient.shared,
+        settings: SettingsStore = .shared,
+        uploadQueue: UploadQueueMonitor = .shared
+    ) {
         self.repository = repository
+        self.settings = settings
+        self.uploadQueue = uploadQueue
     }
 
     private var uploadTask: Task<Void, Never>?
@@ -65,8 +73,8 @@ public final class ScanViewModel {
                 return
             }
             let models = [
-                "scan": SettingsStore.shared.model(for: .scan).rawValue,
-                "notes": SettingsStore.shared.model(for: .notes).rawValue,
+                "scan": settings.model(for: .scan).rawValue,
+                "notes": settings.model(for: .notes).rawValue,
             ]
             let upload = try await repository.initiateUpload(models: models)
             photoId = upload.photoId
@@ -81,7 +89,7 @@ public final class ScanViewModel {
                 return
             }
 
-            UploadQueueMonitor.shared.track(photoId: upload.photoId)
+            uploadQueue.track(photoId: upload.photoId)
             step = .queued
         } catch is CancellationError {
             // view was dismissed mid-flow, nothing to surface
