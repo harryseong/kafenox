@@ -8,17 +8,28 @@ tracer = Tracer()
 
 
 def _build_filter_condition(params: dict):
-    condition = CoffeeModel.status == "COMPLETE"
+    """No status filter by default: the catalog shows in-flight
+    (PENDING/PROCESSING) and FAILED items too, so the user can see what's
+    still being extracted. Those items have no roastLevel/rating/etc. yet, so
+    they naturally drop out of any of the optional filters below."""
+    condition = None
+
+    def add(new_condition):
+        nonlocal condition
+        condition = new_condition if condition is None else condition & new_condition
+
+    if params.get("status"):
+        add(CoffeeModel.status == params["status"])
     if params.get("origin"):
-        condition &= CoffeeModel.originCountry == params["origin"]
+        add(CoffeeModel.originCountry == params["origin"])
     if params.get("roastLevel"):
-        condition &= CoffeeModel.roastLevel == params["roastLevel"]
+        add(CoffeeModel.roastLevel == params["roastLevel"])
     if params.get("roastDateFrom"):
-        condition &= CoffeeModel.roastDate >= params["roastDateFrom"]
+        add(CoffeeModel.roastDate >= params["roastDateFrom"])
     if params.get("roastDateTo"):
-        condition &= CoffeeModel.roastDate <= params["roastDateTo"]
+        add(CoffeeModel.roastDate <= params["roastDateTo"])
     if params.get("minRating"):
-        condition &= CoffeeModel.rating >= int(params["minRating"])
+        add(CoffeeModel.rating >= int(params["minRating"]))
     return condition
 
 

@@ -36,6 +36,18 @@ final class DetailViewModel {
         syncCatalog()
     }
 
+    /// "Looks good" -- clears the New badge for an extraction the user is
+    /// happy with as-is. Editing any field already does this server-side.
+    @MainActor
+    func verify() async {
+        errorMessage = nil
+        do {
+            applyUpdate(try await APIClient.shared.verifyCoffee(photoId: coffee.photoId))
+        } catch {
+            errorMessage = "Couldn't confirm — try again."
+        }
+    }
+
     @MainActor
     func delete() async throws {
         try await APIClient.shared.deleteCoffee(photoId: coffee.photoId)

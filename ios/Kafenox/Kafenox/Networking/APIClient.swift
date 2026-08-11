@@ -115,6 +115,18 @@ actor APIClient {
         }
     }
 
+    /// "Looks good" -- confirms an extracted coffee as-is, without edits.
+    /// The backend treats `verified` as a flag, not an editable field.
+    func verifyCoffee(photoId: String) async throws -> Coffee {
+        let body = try JSONSerialization.data(withJSONObject: ["verified": true])
+        let data = try await request("coffees/\(photoId)", method: "PATCH", body: body)
+        do {
+            return try decoder.decode(Coffee.self, from: data)
+        } catch {
+            throw APIError.decoding(error)
+        }
+    }
+
     func deleteCoffee(photoId: String) async throws {
         _ = try await request("coffees/\(photoId)", method: "DELETE")
     }

@@ -50,3 +50,18 @@ extension Coffee {
         [originRegion, originCountry].compactMap { $0 }.joined(separator: ", ")
     }
 }
+
+/// Extraction-status helpers. Uploads are queued and extracted in the
+/// background, so the catalog shows items in every state -- these name the
+/// states the UI actually branches on.
+extension Coffee {
+    var isProcessing: Bool { status == "PENDING" || status == "PROCESSING" }
+    var isFailedExtraction: Bool { status == "FAILED" }
+    var isCompleteExtraction: Bool { status == "COMPLETE" }
+    /// Extracted but not yet confirmed by the user -- drives the "New" badge.
+    var isNew: Bool { isCompleteExtraction && !isVerified }
+
+    /// Name for notification/placeholder copy, matching the "Untitled"
+    /// fallback used across the detail and edit screens.
+    var displayName: String { coffeeName ?? roaster ?? "Untitled" }
+}

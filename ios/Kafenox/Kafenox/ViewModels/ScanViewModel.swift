@@ -3,63 +3,53 @@ import UIKit
 
 enum ScanStep {
     case capturing
-    case scanning
-    case review
+    case uploading
+    case queued
     case failed(message: String)
 }
 
-/// Owns the capture -> upload -> poll -> review flow. The prototype's
-/// "Scanning" screen reveals 6 canned fields on a fixed timer; the real
-/// backend gives no partial-extraction signal, so this shows one
-/// indeterminate "reading label" state for the whole poll instead of faking
-/// a staggered reveal.
+/// Owns capture -> upload -> queued. Extraction itself runs on the backend
+/// (S3 event -> Step Functions -> Bedrock), which can take a while, so this
+/// no longer waits for it: once the photo is uploaded the item is handed to
+/// UploadQueueMonitor and the user is returned to the catalog, where the row
+/// shows "Processing" until the result lands. Review happens later from the
+/// detail screen, not inline here.
 @Observable
 final class ScanViewModel {
     var step: ScanStep = .capturing
     var capturedImage: UIImage?
     var photoId: String?
-    var original: Coffee?
 
-    // Editable draft fields for the Review screen, matching the prototype's
-    // Review inputs exactly (roastDate/altitude/flavorNotes aren't editable
-    // there even though the backend's PATCH allows it).
-    var draftRoaster = ""
-    var draftName = ""
-    var draftCountry = ""
-    var draftRegion = ""
-    var draftProcess = ""
-    var draftVariety = ""
-    var draftProducer = ""
+    private var uploadTask: Task<Void, Never>?
 
-    private var pollTask: Task<Void, Never>?
-
-    private static let pollInterval: Duration = .milliseconds(1500)
-    private static let pollTimeout: Duration = .seconds(30)
+    /// A short grace period after upload to catch failures the pipeline
+    /// reports immediately (an unreadable image, say) while the user is still
+    /// looking at the scan screen. Anything slower is the queue's problem.
+    private static let earlyFailureDelay: Duration = .milliseconds(1500)
 
     func reset() {
-        cancelPolling()
+        cancelUpload()
         step = .capturing
         capturedImage = nil
         photoId = nil
-        original = nil
     }
 
-    func cancelPolling() {
-        pollTask?.cancel()
-        pollTask = nil
+    func cancelUpload() {
+        uploadTask?.cancel()
+        uploadTask = nil
     }
 
     @MainActor
     func didCapture(_ image: UIImage) {
         capturedImage = image
-        step = .scanning
-        pollTask = Task { [weak self] in
-            await self?.uploadAndPoll(image: image)
+        step = .uploading
+        uploadTask = Task { [weak self] in
+            await self?.uploadAndQueue(image: image)
         }
     }
 
     @MainActor
-    private func uploadAndPoll(image: UIImage) async {
+    private func uploadAndQueue(image: UIImage) async {
         do {
             guard let jpeg = image.jpegData(compressionQuality: 0.85) else {
                 step = .failed(message: "Couldn't process that photo.")
@@ -73,22 +63,16 @@ final class ScanViewModel {
             photoId = upload.photoId
             try await APIClient.shared.uploadPhoto(jpeg, to: upload.uploadUrl)
 
-            let deadline = ContinuousClock.now + Self.pollTimeout
-            while ContinuousClock.now < deadline {
-                if Task.isCancelled { return }
-                let status = try await APIClient.shared.getUploadStatus(photoId: upload.photoId)
-                if status.status == "COMPLETE" {
-                    let coffee = try await APIClient.shared.getCoffee(photoId: upload.photoId)
-                    populateDraft(from: coffee)
-                    step = .review
-                    return
-                } else if status.status == "FAILED" {
-                    step = .failed(message: status.errorMessage ?? "Couldn't read that label.")
-                    return
-                }
-                try await Task.sleep(for: Self.pollInterval)
+            try await Task.sleep(for: Self.earlyFailureDelay)
+            if Task.isCancelled { return }
+            if let status = try? await APIClient.shared.getUploadStatus(photoId: upload.photoId),
+               status.status == "FAILED" {
+                step = .failed(message: status.errorMessage ?? "Couldn't read that label.")
+                return
             }
-            step = .failed(message: "That's taking longer than expected.")
+
+            UploadQueueMonitor.shared.track(photoId: upload.photoId)
+            step = .queued
         } catch is CancellationError {
             // view was dismissed mid-flow, nothing to surface
         } catch let error as APIError {
@@ -108,43 +92,11 @@ final class ScanViewModel {
         }
     }
 
-    private func populateDraft(from coffee: Coffee) {
-        original = coffee
-        draftRoaster = coffee.roaster ?? ""
-        draftName = coffee.coffeeName ?? ""
-        draftCountry = coffee.originCountry ?? ""
-        draftRegion = coffee.originRegion ?? ""
-        draftProcess = coffee.process ?? ""
-        draftVariety = coffee.variety ?? ""
-        draftProducer = coffee.producer ?? ""
-    }
-
     @MainActor
     func retake() {
-        cancelPolling()
+        cancelUpload()
         step = .capturing
         capturedImage = nil
         photoId = nil
-        original = nil
-    }
-
-    /// Only PATCHes fields the user actually changed, matching the backend's
-    /// isVerified semantics (any non-rating edit marks it human-verified).
-    @MainActor
-    func addToCollection() async throws -> Coffee {
-        guard let photoId, let original else {
-            throw URLError(.unknown)
-        }
-        var changed: [String: Any] = [:]
-        if draftRoaster != (original.roaster ?? "") { changed["roaster"] = draftRoaster }
-        if draftName != (original.coffeeName ?? "") { changed["coffeeName"] = draftName }
-        if draftCountry != (original.originCountry ?? "") { changed["originCountry"] = draftCountry }
-        if draftRegion != (original.originRegion ?? "") { changed["originRegion"] = draftRegion }
-        if draftProcess != (original.process ?? "") { changed["process"] = draftProcess }
-        if draftVariety != (original.variety ?? "") { changed["variety"] = draftVariety }
-        if draftProducer != (original.producer ?? "") { changed["producer"] = draftProducer }
-
-        guard !changed.isEmpty else { return original }
-        return try await APIClient.shared.updateCoffee(photoId: photoId, fields: changed)
     }
 }

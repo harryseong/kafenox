@@ -11,10 +11,14 @@ struct CoffeeGridCard: View {
                     .fill(coffee.swatchColor)
                     .frame(width: 10, height: 10)
                 Spacer()
-                Text(ratingText)
-                    .font(.app(12, weight: .semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(palette.muted)
+                if let badge = CoffeeStatusBadge(coffee: coffee) {
+                    StatusBadgeView(kind: badge, palette: palette)
+                } else {
+                    Text(ratingText)
+                        .font(.app(12, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(palette.muted)
+                }
             }
 
             Text(coffee.coffeeName ?? "Untitled")
@@ -25,7 +29,7 @@ struct CoffeeGridCard: View {
                 .frame(minHeight: 40, alignment: .topLeading)
                 .padding(.top, 2)
 
-            Text(coffee.roaster ?? " ")
+            Text(coffee.roaster ?? subtitleFallback)
                 .font(.app(12, weight: .medium))
                 .foregroundStyle(palette.muted)
                 .lineLimit(1)
@@ -52,5 +56,12 @@ struct CoffeeGridCard: View {
     private var ratingText: String {
         guard let rating = coffee.rating else { return "—" }
         return "\(rating)/10"
+    }
+
+    /// A queued scan has no roaster yet; say why the line is blank.
+    private var subtitleFallback: String {
+        if coffee.isProcessing { return "Reading the label…" }
+        if coffee.isFailedExtraction { return "Couldn't read that label" }
+        return " "
     }
 }

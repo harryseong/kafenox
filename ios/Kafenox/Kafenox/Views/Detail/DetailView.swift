@@ -16,12 +16,22 @@ struct DetailView: View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                navRow(palette: palette)
+                navRow(coffee: coffee, palette: palette)
                 header(coffee: coffee, palette: palette)
-                ratingCard(coffee: coffee, palette: palette)
-                flavorSection(coffee: coffee, palette: palette)
-                detailRows(coffee: coffee, palette: palette)
-                tastingNote(coffee: coffee, palette: palette)
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.app(13, weight: .semibold))
+                        .foregroundStyle(Palette.error)
+                        .padding(.top, 14)
+                }
+                if coffee.isProcessing {
+                    processingPlaceholder(palette: palette)
+                } else {
+                    ratingCard(coffee: coffee, palette: palette)
+                    flavorSection(coffee: coffee, palette: palette)
+                    detailRows(coffee: coffee, palette: palette)
+                    tastingNote(coffee: coffee, palette: palette)
+                }
             }
             .padding(.top, 8)
             .padding(.horizontal, 20)
@@ -63,7 +73,7 @@ struct DetailView: View {
         }
     }
 
-    private func navRow(palette: Palette) -> some View {
+    private func navRow(coffee: Coffee, palette: Palette) -> some View {
         HStack {
             Button {
                 dismiss()
@@ -83,20 +93,42 @@ struct DetailView: View {
             Spacer()
 
             HStack(spacing: 8) {
-                Button {
-                    isEditPresented = true
-                } label: {
-                    Circle()
-                        .fill(palette.surface)
-                        .frame(width: 36, height: 36)
-                        .overlay(Circle().stroke(palette.line, lineWidth: 1))
-                        .overlay(
-                            Image(systemName: "pencil")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(palette.fg)
-                        )
+                // Confirms an extraction the user is happy with as-is; any
+                // edit below does the same thing implicitly.
+                if coffee.isNew {
+                    Button {
+                        Task { await viewModel.verify() }
+                    } label: {
+                        Circle()
+                            .fill(palette.surface)
+                            .frame(width: 36, height: 36)
+                            .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                            .overlay(
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(Palette.success)
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
+
+                // Editing mid-extraction would race the pipeline's own write.
+                if !coffee.isProcessing {
+                    Button {
+                        isEditPresented = true
+                    } label: {
+                        Circle()
+                            .fill(palette.surface)
+                            .frame(width: 36, height: 36)
+                            .overlay(Circle().stroke(palette.line, lineWidth: 1))
+                            .overlay(
+                                Image(systemName: "pencil")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(palette.fg)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
 
                 Button {
                     deleteError = nil
@@ -152,9 +184,36 @@ struct DetailView: View {
     }
 
     private func subtitle(for coffee: Coffee) -> String {
-        [coffee.roaster, coffee.originLabel.isEmpty ? nil : coffee.originLabel]
+        let text = [coffee.roaster, coffee.originLabel.isEmpty ? nil : coffee.originLabel]
             .compactMap { $0 }
             .joined(separator: " · ")
+        guard text.isEmpty else { return text }
+        if coffee.isProcessing { return "Just uploaded" }
+        if coffee.isFailedExtraction { return "Extraction failed" }
+        return ""
+    }
+
+    /// Stands in for the rating/flavor/detail sections while the backend is
+    /// still reading the label -- there's nothing to show or edit yet.
+    private func processingPlaceholder(palette: Palette) -> some View {
+        VStack(spacing: 10) {
+            ProgressView()
+                .controlSize(.regular)
+                .tint(palette.muted)
+            Text("Reading the label")
+                .font(.app(15, weight: .semibold))
+                .foregroundStyle(palette.fg)
+            Text("This usually takes a few seconds. We'll notify you when it's ready to review.")
+                .font(.app(13))
+                .foregroundStyle(palette.muted)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 34)
+        .padding(.horizontal, 20)
+        .background(palette.surface, in: RoundedRectangle(cornerRadius: 18))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(palette.line, lineWidth: 1))
+        .padding(.top, 22)
     }
 
     private func ratingCard(coffee: Coffee, palette: Palette) -> some View {
