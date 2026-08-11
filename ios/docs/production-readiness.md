@@ -1,6 +1,7 @@
 # iOS Production-Readiness Report
 
-_Evaluated against 2026 iOS / Swift best practices. Generated Aug 11, 2026._
+_Evaluated against 2026 iOS / Swift best practices. Re-evaluated Aug 11, 2026
+after the readiness follow-up (PR #17)._
 
 ---
 
@@ -9,44 +10,48 @@ _Evaluated against 2026 iOS / Swift best practices. Generated Aug 11, 2026._
 | Area | Grade | Notes |
 |---|---|---|
 | Swift 6 / strict concurrency | ✅ Excellent | Fully adopted, intentional isolation strategy |
-| Architecture / module separation | ✅ Excellent | Compiler-enforced, well-documented |
+| Architecture / module separation | ✅ Excellent | Compiler-enforced; app target is composition-only |
 | `@Observable` / SwiftUI patterns | ✅ Current | Fully migrated from `ObservableObject` |
-| Testing (Swift Testing) | ✅ Strong | Good coverage, good test doubles |
-| Configuration / secrets | ✅ Good | Keychain for keys, xcconfig for URLs |
+| Testing (Swift Testing) | ✅ Excellent | Broad VM coverage including Ask AI; good doubles |
+| Dependency injection consistency | ✅ Excellent | Repository and settings injected; prior bypass fixed |
+| Configuration / secrets | ✅ Good | Keychain for keys; xcconfig for URLs; URL safety documented |
 | Logging | ✅ Excellent | `OSLog` with privacy annotations |
-| Accessibility | ⚠️ Partial | Labels present; no reduce-motion support, no full audit |
-| Dependency injection consistency | ⚠️ One gap | `CatalogView.performDelete` bypasses injected repo |
+| Accessibility | ✅ Strong | ADR 0004; Dynamic Type, Reduce Motion, VoiceOver actions |
+| CI / tooling | ✅ Excellent | Format lint, package tests, warnings-as-errors |
 | UI test coverage | ❌ Absent | No snapshot or UI tests |
-| Push notifications / offline | ⚠️ Documented limitation | Local notifications only, documented in ADR |
+| Push notifications / offline | ⚠️ Documented limitation | Local notifications only; see ADR 0003 |
+| Production API stage | ⚠️ Gap | Release still targets the `/dev` API stage |
+
+---
+
+## Changes since the previous report
+
+The prior audit's priority list has been acted on:
+
+| Prior item | Outcome |
+|---|---|
+| High — `CatalogView.performDelete` used `APIClient.shared` | Fixed via `CatalogViewModel.delete(photoId:)` |
+| Medium — No `AskAIViewModel.send()` tests | Added (round-trip, trim, history, errors, reentrancy, model) |
+| Medium — `PressScaleButtonStyle` ignored Reduce Motion | Gated; scan `repeatForever` animations and queued spring also gated |
+| Medium — Confirm committed `Debug.xcconfig` API URL | Documented intentional: URL is not a credential; key stays in Keychain |
+| Low — Typed `updateCoffee` payload | `CoffeeUpdate` replaces `[String: Sendable]` at call sites |
+| Low — VoiceOver / hints / values | Expanded beyond labels (see §7 and ADR 0004) |
+
+Follow-up also fixed issues the first report missed: `EditCoffeeView` had no injected repository; `AskAIViewModel` / `ScanViewModel` read `SettingsStore.shared` directly; Dynamic Type used `UIFontMetrics` and did not update live — now `.appFont` via `@ScaledMetric`.
 
 ---
 
 ## 1. Swift 6 / Strict Concurrency — ✅ Excellent
 
-Every package declares `swiftLanguageMode(.v6)`, meaning the compiler enforces
-data-race safety at compile time rather than emitting warnings. The isolation
-strategy is intentional and well-layered:
+Every package declares `swiftLanguageMode(.v6)`. Isolation remains intentional:
 
-- **`Core` and `Networking`** are deliberately nonisolated — their value types
-  cross actor boundaries (`actor APIClient` decodes off the main actor; `Coffee`
-  is `Sendable`).
-- **`Features` and `DesignSystem`** use `.defaultIsolation(MainActor.self)` so
-  UI-adjacent code needs no per-declaration annotation noise.
-- `UploadQueueMonitor` is `@MainActor @Observable`, and its
-  `UNUserNotificationCenterDelegate` conformance is correctly marked `nonisolated`.
-- Structured concurrency is used correctly throughout — `Task { [weak self] in
-  … }` with `Task.isCancelled` checks, `CancellationError` caught separately,
-  and `cancelUpload()` cancels in-flight `Task` references before releasing them.
-
-**Minor rough edge:** `CoffeeRepository.updateCoffee` takes `[String: Sendable]`
-instead of a typed `CoffeeUpdate` struct. This is a deliberate trade-off for the
-DynamoDB flat-map shape but sacrifices call-site safety and discoverability.
+- **`Core` and `Networking`** are nonisolated — value types cross actor boundaries.
+- **`Features` and `DesignSystem`** use `.defaultIsolation(MainActor.self)`.
+- Structured concurrency (`Task { [weak self] }`, cancellation, background tasks) is unchanged and sound.
 
 ---
 
 ## 2. Architecture & Module Separation — ✅ Excellent
-
-The four-package split is compiler-enforced rather than a convention:
 
 ```
 Core  ──▶  Networking
@@ -56,131 +61,80 @@ Core  ──▶  Networking
            Features  ◀──  App target (@main, RootView, tab shell only)
 ```
 
-- **`Core`** — domain models, `CoffeeRepository` protocol, configuration,
-  loggers. Foundation and OSLog only; testable natively on macOS without a
-  simulator.
-- **`DesignSystem`** — palette, typography, shared components.
-- **`Networking`** — the `URLSession`-backed `APIClient` implementing
-  `CoffeeRepository`.
-- **`Features`** — all five feature areas and their view models.
-
-The ADRs in `docs/adr/` document the reasoning behind this layout (including why
-one-package-per-feature was rejected) — an unusually strong signal of a mature
-project.
+The app target compiles only `KafenoxApp`, `RootView`, and `KafenoxTabBar`. Feature code lives in packages. ADRs in `docs/adr/` still document the layout and trade-offs.
 
 ---
 
 ## 3. Observation Framework — ✅ Current
 
-All view models use `@Observable` (the macro that supersedes `ObservableObject`).
-Views consume state via `@Environment`, `Bindable`, and direct property access.
-`@ObservedObject`, `@StateObject`, and `@Published` are absent — the codebase
-has fully migrated to the iOS 17+ model.
+All view models use `@Observable`. No `ObservableObject` / `@Published` / `@StateObject` in the shipping packages.
 
 ---
 
-## 4. Testing — ✅ Strong
+## 4. Testing — ✅ Excellent
 
-The project uses **Swift Testing** (`@Suite`, `@Test`, `#expect`) — the framework
-that shipped with Xcode 16 and is now idiomatic over XCTest.
+Swift Testing throughout. Coverage now includes:
 
-**What's well covered:**
+- `CatalogViewModel` — load, filter, mutation, delete, in-flight scan pinning
+- `AskAIViewModel` — send path, history, errors, busy gating, selected model
+- `DetailViewModel` / `InsightsViewModel` / `UploadQueueMonitor`
+- `CoffeeUpdate` payload / emptiness rules
+- Core domain helpers (`Coffee` status / display)
 
-- `CatalogViewModel` — loading, filtering, mutation, and in-flight scan pinning.
-- `UploadQueueMonitor` — state transitions, idempotency, transient failure
-  retry, background task lifecycle, and notification delivery.
-- `DetailViewModel` and `InsightsViewModel` have their own test suites.
+Infrastructure quality is unchanged: `StubCoffeeRepository` actor, `SpyUploadQueueServices`, `waitUntil` polling.
 
-**Test infrastructure quality:**
-
-- `StubCoffeeRepository` is a hand-written `actor` — no mocking framework needed,
-  and it stops compiling the moment `CoffeeRepository` changes.
-- `SpyUploadQueueServices` injects a seam for `UNUserNotificationCenter` and
-  `UIApplication.beginBackgroundTask`, both of which would trap in a bare test
-  process without it.
-- `waitUntil` polls on 20 ms ticks rather than fixed `sleep` — not flaky.
-
-**What's missing:**
-
-- `AskAIViewModel.send()` has no test coverage.
-- No UI tests, snapshot tests, or integration tests against a staging environment.
+**Still missing:** UI tests, snapshot tests, staging integration tests.
 
 ---
 
 ## 5. Configuration & Secrets — ✅ Good
 
-- The API key is stored in the **Keychain** via `KeychainStore`, not hardcoded
-  or bundled in the binary.
-- The base URL is injected via `.xcconfig` → `Info.plist` → `AppConfiguration`,
-  with a `preconditionFailure` on malformed values — fast failure at launch
-  rather than a silent wrong URL.
-- `Debug.xcconfig` contains a real AWS API Gateway URL. Confirm this is either
-  rotatable on exposure or protected by a `.xcconfig.local` / `.gitignore` pattern.
+- API key: Keychain only (`KeychainStore`), never committed.
+- Base URL: `.xcconfig` → `Info.plist` → `AppConfiguration`, with launch-time failure on malformed values.
+- Committed API Gateway host is intentional on a public repo: it is not a credential; requests require `x-api-key`; usage plan throttles abuse. Documented in `ios/README.md`.
+
+**Remaining gap:** `Release.xcconfig` still points at the `/dev` stage until a prod stage exists.
 
 ---
 
 ## 6. Logging — ✅ Excellent
 
-`Logger` (OSLog) is used everywhere via subsystem/category pairs defined once
-in `AppLog.swift`. Privacy annotations (`privacy: .public`) are applied only to
-non-user data (HTTP status codes, photo IDs). `print()` is absent. This is
-exactly what Apple's Instruments and Console.app workflow expects.
+`Logger` / `AppLog` with privacy annotations. No `print()` in package sources.
 
 ---
 
-## 7. Accessibility — ⚠️ Partial
+## 7. Accessibility — ✅ Strong
 
-**Present:**
+Documented in ADR 0004. Shipping behavior includes:
 
-- `accessibilityHidden(true)` on decorative icons.
-- `accessibilityLabel` on icon-only buttons (e.g. the layout toggle).
-- Empty states and error states are implemented with readable copy.
+- Semantic actions on swipeable catalog rows (open / Edit / Delete)
+- Labeled text fields in `EditCoffeeView`
+- `accessibilityValue` + `accessibilityAdjustableAction` on the rating strip
+- Hints on key CTAs (Ask AI, verify)
+- Live Dynamic Type via `@ScaledMetric`-backed `.appFont`
+- Reduce Motion on decorative motion (scan animations, press scale, queued spring)
 
-**Missing / unverified:**
-
-- `PressScaleButtonStyle` does not check `UIAccessibility.isReduceMotionEnabled`
-  — scale animations should be skipped for users who have enabled Reduce Motion.
-- No `accessibilityValue` or `accessibilityHint` on interactive controls where
-  they would add context.
-- No VoiceOver end-to-end audit on record.
+**Still manual:** VoiceOver / content-size / Reduce Motion checks in `ios/README.md` are not automated; easy to regress.
 
 ---
 
-## 8. Dependency Injection Consistency — ⚠️ One Gap
+## 8. Dependency Injection — ✅ Excellent
 
-`CatalogView.performDelete()` calls `APIClient.shared` directly instead of
-routing through the `repository` already injected into `CatalogViewModel`:
-
-```swift
-// CatalogView.swift — bypasses the injected repository
-try await APIClient.shared.deleteCoffee(photoId: coffee.photoId)
-```
-
-This breaks the dependency inversion the rest of the architecture maintains and
-means `CatalogView` cannot be exercised in isolation without a live network.
-The fix is to add a `deleteCoffee(photoId:)` method to `CatalogViewModel` and
-call that instead.
+Prior gap is closed. Catalog delete, detail delete/verify/rate, edit save, Ask AI, and scan upload all go through injected `CoffeeRepository` (default `APIClient.shared`). Settings are injectable for tests.
 
 ---
 
 ## 9. Background Execution — ✅ Well-Considered
 
-`UploadQueueMonitor` correctly uses `UIApplication.beginBackgroundTask` to
-extend execution time while waiting for upload completion. The ADR documents the
-deliberate choice of local notifications over APNs and its trade-off: notifications
-only fire while the process is alive (foreground, or the ~30 s background window).
-This is acknowledged and proportionate to the current scope.
+Unchanged: `beginBackgroundTask` + local notifications; APNs deferred (ADR 0003). Proportionate for current scope.
 
 ---
 
-## 10. Project Structure & Tooling — ✅ Modern
+## 10. Project Structure, CI & Tooling — ✅ Excellent
 
-- **XcodeGen** (`project.yml`) keeps `.pbxproj` generated and reviewable — no
-  merge conflicts in Xcode project files.
-- **`swift-format`** config at the repo root with explicit rule overrides.
-- Build settings live in `.xcconfig` files, not embedded in the Xcode inspector.
-- Deployment target is **iOS 26 / Swift 6.2** — current as of the Xcode 26
-  release cycle.
+- XcodeGen + xcconfig + `swift-format`
+- Deployment target iOS 26 / Swift 6.2 packages
+- CI (`.github/workflows/ios.yml`): format lint, Core `swift test`, Features `xcodebuild test`, app build with `SWIFT_TREAT_WARNINGS_AS_ERRORS=YES`
 
 ---
 
@@ -188,10 +142,9 @@ This is acknowledged and proportionate to the current scope.
 
 | Priority | Item |
 |---|---|
-| High | Fix `CatalogView.performDelete` to use the injected `CoffeeRepository` |
-| Medium | Add `@Test` coverage for `AskAIViewModel.send()` |
-| Medium | Audit `PressScaleButtonStyle` for `UIAccessibility.isReduceMotionEnabled` |
-| Medium | Confirm `Debug.xcconfig` API URL is safe to commit (rotatable / dev-only) |
-| Low | Full VoiceOver pass; add `accessibilityHint` / `accessibilityValue` where missing |
-| Low | Add UI / snapshot tests for at least the catalog and detail screens |
-| Low | Replace `[String: Sendable]` in `updateCoffee` with a typed update type |
+| Medium | Point `Release.xcconfig` at a dedicated prod API stage when one exists |
+| Medium | Add UI / snapshot tests for catalog → detail → verify and scan → queued |
+| Low | Keep running (or automate) the README VoiceOver / Dynamic Type / Reduce Motion checklist |
+| Low | APNs if scan-complete notifications must fire after process death |
+| Low | Retry path for failed extractions (today: delete and rescan) |
+| Low | Revisit `list_coffees` DynamoDB scan with GSIs past ~5–10k items |
