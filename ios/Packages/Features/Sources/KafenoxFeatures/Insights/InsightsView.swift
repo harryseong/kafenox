@@ -24,8 +24,9 @@ public struct InsightsView: View {
     @State private var isAskPresented = false
     @State private var isScrolled = false
     @State private var cameraPosition: MapCameraPosition = .region(
-        MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 10, longitude: 20),
-                            span: MKCoordinateSpan(latitudeDelta: 140, longitudeDelta: 140))
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 10, longitude: 20),
+            span: MKCoordinateSpan(latitudeDelta: 140, longitudeDelta: 140))
     )
 
     public var body: some View {
@@ -81,11 +82,14 @@ public struct InsightsView: View {
                     Image(systemName: "sparkle")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundStyle(palette.bg)
+                        .accessibilityHidden(true)
                 )
                 .shadow(color: palette.shadow, radius: 15, y: 7)
                 .opacity(0.6)
         }
         .buttonStyle(PressScaleButtonStyle())
+        .accessibilityLabel("Ask AI")
+        .accessibilityHint("Opens a chat grounded in your collection")
         .padding(.trailing, 20)
         .padding(.bottom, 20)
     }
@@ -105,6 +109,8 @@ public struct InsightsView: View {
                     .font(.app(32, weight: .bold))
                     .tracking(-0.8)
                     .foregroundStyle(palette.fg)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
                 Text(metaLine)
                     .font(.app(13, weight: .medium))
                     .foregroundStyle(palette.muted)
@@ -143,7 +149,9 @@ public struct InsightsView: View {
         VStack(alignment: .leading, spacing: 0) {
             Map(position: $cameraPosition) {
                 ForEach(viewModel.origins) { origin in
-                    Annotation(origin.country, coordinate: CLLocationCoordinate2D(latitude: origin.lat, longitude: origin.lng)) {
+                    Annotation(
+                        origin.country, coordinate: CLLocationCoordinate2D(latitude: origin.lat, longitude: origin.lng)
+                    ) {
                         OriginPin(count: origin.count, maxCount: viewModel.maxCount, palette: palette)
                     }
                 }

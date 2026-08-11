@@ -86,6 +86,7 @@ struct ScanningView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 32))
                 .foregroundStyle(Palette.error)
+                .accessibilityHidden(true)
             Text(message)
                 .font(.app(16, weight: .semibold))
                 .foregroundStyle(.white)

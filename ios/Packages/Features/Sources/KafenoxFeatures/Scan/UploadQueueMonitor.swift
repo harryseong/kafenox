@@ -30,16 +30,21 @@ public final class UploadQueueMonitor: NSObject {
 
     @ObservationIgnored private weak var catalog: CatalogViewModel?
     @ObservationIgnored private let repository: any CoffeeRepository
+    @ObservationIgnored private let system: any UploadQueueSystemServices
     @ObservationIgnored private var pollTask: Task<Void, Never>?
-    @ObservationIgnored private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
+    @ObservationIgnored private var backgroundTaskToken: Int?
 
     /// Slower than the old blocking scan poll (1.5s over a 30s budget): this
     /// loop can run for an open-ended stretch, so it trades latency for
     /// far fewer API calls per queued photo.
     private static let pollInterval: Duration = .seconds(4)
 
-    public init(repository: any CoffeeRepository = APIClient.shared) {
+    public init(
+        repository: any CoffeeRepository = APIClient.shared,
+        system: any UploadQueueSystemServices = SystemUploadQueueServices()
+    ) {
         self.repository = repository
+        self.system = system
         super.init()
     }
 
@@ -130,19 +135,17 @@ public final class UploadQueueMonitor: NSObject {
 
     // MARK: Background execution
 
-    /// Buys the poll loop the system's short background grace period, so a
-    /// scan started just before backgrounding still has a chance to land.
     private func beginBackgroundTaskIfNeeded() {
-        guard backgroundTaskId == .invalid else { return }
-        backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "kafenox-upload-queue") { [weak self] in
-            Task { @MainActor in self?.endBackgroundTaskIfNeeded() }
+        guard backgroundTaskToken == nil else { return }
+        backgroundTaskToken = system.beginBackgroundTask { [weak self] in
+            self?.endBackgroundTaskIfNeeded()
         }
     }
 
     private func endBackgroundTaskIfNeeded() {
-        guard backgroundTaskId != .invalid else { return }
-        UIApplication.shared.endBackgroundTask(backgroundTaskId)
-        backgroundTaskId = .invalid
+        guard let token = backgroundTaskToken else { return }
+        system.endBackgroundTask(token)
+        backgroundTaskToken = nil
     }
 
     // MARK: Notifications
@@ -150,20 +153,11 @@ public final class UploadQueueMonitor: NSObject {
     /// Asked for only once the user has actually queued a scan, so the
     /// prompt lands with obvious context instead of at first launch.
     private func requestNotificationAuthorizationIfNeeded() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .notDetermined else { return }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
-        }
+        system.requestNotificationAuthorizationIfNeeded()
     }
 
     private func notify(title: String, body: String, photoId: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        content.userInfo = ["photoId": photoId]
-        let request = UNNotificationRequest(identifier: photoId, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        system.postNotification(title: title, body: body, photoId: photoId)
     }
 }
 

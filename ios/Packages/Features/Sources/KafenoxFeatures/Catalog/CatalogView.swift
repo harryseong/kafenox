@@ -103,6 +103,8 @@ public struct CatalogView: View {
                     .font(.app(32, weight: .bold))
                     .tracking(-0.8)
                     .foregroundStyle(palette.fg)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.6)
                 Text(viewModel.metaLine)
                     .font(.app(13, weight: .medium))
                     .foregroundStyle(palette.muted)
@@ -119,6 +121,7 @@ public struct CatalogView: View {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 14))
                     .foregroundStyle(palette.muted)
+                    .accessibilityHidden(true)
                 TextField("Search flavor, origin, roaster", text: Bindable(viewModel).query)
                     .font(.app(14))
                     .foregroundStyle(palette.fg)
@@ -138,6 +141,7 @@ public struct CatalogView: View {
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(palette.line, lineWidth: 1))
             }
             .buttonStyle(.plain)
+            .accessibilityLabel(viewModel.layout == .grid ? "Switch to list layout" : "Switch to grid layout")
         }
         .padding(.top, 18)
     }

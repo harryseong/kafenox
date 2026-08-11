@@ -21,6 +21,7 @@ struct KafenoxTabBar: View {
                             Image(systemName: "camera.fill")
                                 .foregroundStyle(palette.bg)
                                 .font(.system(size: 21, weight: .semibold))
+                                .accessibilityHidden(true)
                         )
                         .shadow(color: palette.shadow, radius: 9, y: 4)
                     Text("Scan")
@@ -31,6 +32,8 @@ struct KafenoxTabBar: View {
                 .offset(y: -9)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Scan a coffee bag")
+            .accessibilityAddTraits(.isButton)
 
             tabButton(tab: .insights, systemImage: "chart.bar.fill", label: "Insights")
         }
@@ -47,11 +50,17 @@ struct KafenoxTabBar: View {
         } label: {
             VStack(spacing: 5) {
                 Image(systemName: systemImage).font(.system(size: 21))
-                Text(label).font(.app(10, weight: .semibold))
+                Text(label)
+                    .font(.app(10, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
             .foregroundStyle(activeTab == tab ? palette.fg : palette.muted)
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(activeTab == tab ? [.isButton, .isSelected] : .isButton)
     }
 }

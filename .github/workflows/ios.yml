@@ -1,0 +1,62 @@
+name: iOS
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SIMULATOR: platform=iOS Simulator,name=iPhone 17 Pro
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pin to whatever 26.x the runner image ships rather than a hardcoded
+      # path, which breaks silently when the image is bumped.
+      - name: Select newest Xcode
+        run: |
+          latest=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$latest" ]; then sudo xcode-select -switch "$latest"; fi
+          xcodebuild -version
+          swift --version
+
+      # Formatting is settled by tooling, not by review comments.
+      - name: Lint formatting
+        working-directory: ios
+        run: |
+          swift format lint --recursive --strict --parallel \
+            Packages/*/Sources Packages/*/Tests Kafenox/Kafenox
+
+      # Fast feedback first: Core is UIKit-free, so it runs natively with no
+      # simulator boot.
+      - name: Test Core
+        working-directory: ios
+        run: swift test --package-path Packages/Core
+
+      - name: Test Features
+        working-directory: ios/Packages/Features
+        run: xcodebuild test -scheme Features -destination "$SIMULATOR"
+
+      # Warnings fail the build: warnings allowed to accumulate stop being read.
+      - name: Build app
+        working-directory: ios/Kafenox
+        run: |
+          xcodebuild build \
+            -project Kafenox.xcodeproj \
+            -scheme Kafenox \
+            -destination "$SIMULATOR" \
+            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES

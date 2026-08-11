@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// The two palettes from the Claude Design v3 prototype's theme tokens.
 public enum Theme: String, CaseIterable, Sendable {
@@ -77,10 +78,36 @@ public struct PressScaleButtonStyle: ButtonStyle {
 /// system stack -- everything is the system font differentiated by size,
 /// weight, and tracking. `app` mirrors the design's px sizes 1:1.
 ///
-/// `.system(size:)` scales with Dynamic Type via `relativeTo`, so text still
-/// responds to the user's preferred content size.
+/// The design's sizes are absolute, but `Font.system(size:)` on its own is a
+/// *fixed* size that ignores Dynamic Type -- text stayed put at accessibility
+/// sizes. Running each size through `UIFontMetrics` keeps the design's
+/// proportions while still honoring the reader's preferred content size.
+///
+/// Each size is scaled against the system text style closest to it, because
+/// Apple's curves differ by role: a caption grows far more than a large
+/// title. Scaling everything against `.body` made mastheads balloon off the
+/// screen at accessibility sizes while small print stayed cramped.
+///
+/// Known limitation: `UIFontMetrics` resolves at body-evaluation time, so a
+/// content-size change made while the app is running applies on next launch.
 extension Font {
     public static func app(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight)
+        let scaled = UIFontMetrics(forTextStyle: metricsStyle(for: size)).scaledValue(for: size)
+        return .system(size: scaled, weight: weight)
+    }
+
+    private static func metricsStyle(for size: CGFloat) -> UIFont.TextStyle {
+        switch size {
+        case ..<12: .caption2
+        case ..<13: .caption1
+        case ..<14: .footnote
+        case ..<16: .subheadline
+        case ..<17: .callout
+        case ..<20: .body
+        case ..<23: .title3
+        case ..<29: .title2
+        case ..<35: .title1
+        default: .largeTitle
+        }
     }
 }

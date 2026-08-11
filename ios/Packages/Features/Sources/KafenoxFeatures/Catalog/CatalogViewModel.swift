@@ -39,10 +39,11 @@ public final class CatalogViewModel {
         let extracted = coffees.filter(\.isCompleteExtraction).filter { coffee in
             if roastFilter != "All" && coffee.roastGroup != roastFilter { return false }
             guard !q.isEmpty else { return true }
-            let haystack = [
-                coffee.roaster, coffee.coffeeName, coffee.originCountry,
-                coffee.originRegion,
-            ].compactMap { $0 }.joined(separator: " ") + " " + coffee.flavorNotes.joined(separator: " ")
+            let haystack =
+                [
+                    coffee.roaster, coffee.coffeeName, coffee.originCountry,
+                    coffee.originRegion,
+                ].compactMap { $0 }.joined(separator: " ") + " " + coffee.flavorNotes.joined(separator: " ")
             return haystack.lowercased().contains(q)
         }
         return inFlight + extracted

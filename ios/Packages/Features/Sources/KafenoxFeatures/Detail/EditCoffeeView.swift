@@ -90,6 +90,7 @@ struct EditCoffeeView: View {
                     )
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Close")
         }
     }
 
@@ -193,6 +194,7 @@ struct EditCoffeeView: View {
                                 .foregroundStyle(palette.muted)
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("Remove \(note)")
                     }
                     .padding(.leading, 13)
                     .padding(.trailing, 6)
@@ -217,6 +219,7 @@ struct EditCoffeeView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Add flavor note")
                 }
                 .padding(.leading, 13)
                 .padding(.trailing, 4)

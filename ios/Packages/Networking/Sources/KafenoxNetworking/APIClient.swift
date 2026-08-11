@@ -50,9 +50,11 @@ public actor APIClient: CoffeeRepository {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
+            (200..<300).contains(httpResponse.statusCode)
+        else {
             let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-            Logger.networking.error("\(method, privacy: .public) \(path, privacy: .public) failed: HTTP \(statusCode, privacy: .public)")
+            Logger.networking.error(
+                "\(method, privacy: .public) \(path, privacy: .public) failed: HTTP \(statusCode, privacy: .public)")
             throw APIError.server(statusCode: statusCode)
         }
         return data
@@ -93,7 +95,8 @@ public actor APIClient: CoffeeRepository {
         request.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
         let (_, response) = try await session.upload(for: request, from: imageData)
         guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
+            (200..<300).contains(httpResponse.statusCode)
+        else {
             let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
             Logger.networking.error("S3 upload failed: HTTP \(statusCode, privacy: .public)")
             throw APIError.server(statusCode: statusCode)

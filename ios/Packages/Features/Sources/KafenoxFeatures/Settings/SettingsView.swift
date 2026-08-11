@@ -39,6 +39,7 @@ public struct SettingsView: View {
                             )
                     }
                     .buttonStyle(PressScaleButtonStyle())
+                    .accessibilityLabel("Close settings")
                 }
                 Text("Appearance and AI models")
                     .font(.app(13, weight: .medium))
@@ -162,6 +163,7 @@ public struct SettingsView: View {
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(palette.muted)
                         .rotationEffect(.degrees(expanded ? 90 : 0))
+                        .accessibilityHidden(true)
                 }
                 .padding(.vertical, 13)
                 .padding(.horizontal, 14)

@@ -136,7 +136,9 @@ struct CoffeeListRow: View {
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(palette.muted)
+                .accessibilityHidden(true)
         }
+        .accessibilityElement(children: .combine)
         .padding(.vertical, 14)
         .padding(.horizontal, 2)
         .overlay(Rectangle().fill(palette.line).frame(height: 1), alignment: .bottom)

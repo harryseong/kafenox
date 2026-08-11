@@ -13,24 +13,34 @@ public struct FlavorFamily: Identifiable, Hashable, Sendable {
     public var id: String { name }
 
     public static let all: [FlavorFamily] = [
-        FlavorFamily(name: "Fruity", hex: 0xc2553e, notes: [
-            "Peach", "Blackcurrant", "Red Apple", "Orange", "Apricot", "Cherry",
-            "Plum", "Tropical", "Red Grape", "Stone Fruit", "Lime", "Citrus",
-            "Dried Fruit", "Wine", "Tomato",
-        ]),
-        FlavorFamily(name: "Floral & Tea", hex: 0x8a6fb0, notes: [
-            "Bergamot", "Black Tea", "Jasmine", "Florals", "Floral",
-        ]),
-        FlavorFamily(name: "Sweet", hex: 0xc2913e, notes: [
-            "Cane Sugar", "Caramel", "Honey", "Brown Sugar", "Toffee", "Maple",
-        ]),
-        FlavorFamily(name: "Nutty & Cocoa", hex: 0x8a6b3e, notes: [
-            "Cocoa", "Almond", "Dark Chocolate", "Milk Chocolate", "Dark Cocoa",
-            "Peanut", "Hazelnut", "Walnut",
-        ]),
-        FlavorFamily(name: "Spice & Wood", hex: 0x5e7a4a, notes: [
-            "Cedar", "Tobacco", "Spiced",
-        ]),
+        FlavorFamily(
+            name: "Fruity", hex: 0xc2553e,
+            notes: [
+                "Peach", "Blackcurrant", "Red Apple", "Orange", "Apricot", "Cherry",
+                "Plum", "Tropical", "Red Grape", "Stone Fruit", "Lime", "Citrus",
+                "Dried Fruit", "Wine", "Tomato",
+            ]),
+        FlavorFamily(
+            name: "Floral & Tea", hex: 0x8a6fb0,
+            notes: [
+                "Bergamot", "Black Tea", "Jasmine", "Florals", "Floral",
+            ]),
+        FlavorFamily(
+            name: "Sweet", hex: 0xc2913e,
+            notes: [
+                "Cane Sugar", "Caramel", "Honey", "Brown Sugar", "Toffee", "Maple",
+            ]),
+        FlavorFamily(
+            name: "Nutty & Cocoa", hex: 0x8a6b3e,
+            notes: [
+                "Cocoa", "Almond", "Dark Chocolate", "Milk Chocolate", "Dark Cocoa",
+                "Peanut", "Hazelnut", "Walnut",
+            ]),
+        FlavorFamily(
+            name: "Spice & Wood", hex: 0x5e7a4a,
+            notes: [
+                "Cedar", "Tobacco", "Spiced",
+            ]),
     ]
 
     public static let other = FlavorFamily(name: "Other", hex: 0x8a7c6c, notes: [])

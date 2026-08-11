@@ -22,8 +22,8 @@ public struct AppConfiguration: Sendable {
     /// startup failure caught on the first run.
     public static let current: AppConfiguration = {
         guard let host = Bundle.main.object(forInfoDictionaryKey: "API_BASE_URL") as? String,
-              !host.isEmpty,
-              let url = URL(string: "https://\(host)")
+            !host.isEmpty,
+            let url = URL(string: "https://\(host)")
         else {
             preconditionFailure("API_BASE_URL missing or malformed in Info.plist -- check Config/*.xcconfig wiring")
         }

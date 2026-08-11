@@ -75,7 +75,8 @@ public final class ScanViewModel {
             try await Task.sleep(for: Self.earlyFailureDelay)
             if Task.isCancelled { return }
             if let status = try? await repository.uploadStatus(photoId: upload.photoId),
-               status.status == "FAILED" {
+                status.status == "FAILED"
+            {
                 step = .failed(message: status.errorMessage ?? "Couldn't read that label.")
                 return
             }

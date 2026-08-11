@@ -32,6 +32,7 @@ struct AskAIScreen: View {
                         )
                 }
                 .buttonStyle(PressScaleButtonStyle())
+                .accessibilityLabel("Close")
             }
             Text(metaLine)
                 .font(.app(13, weight: .medium))
@@ -218,6 +219,7 @@ struct AskAIView: View {
                     )
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Send question")
             .disabled(viewModel.isBusy)
             .opacity(viewModel.isBusy ? 0.5 : 1)
         }

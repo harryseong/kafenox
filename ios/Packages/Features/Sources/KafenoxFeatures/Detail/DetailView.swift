@@ -50,8 +50,9 @@ struct DetailView: View {
                 .onEnded { value in
                     guard !isDeleteConfirmPresented else { return }
                     if value.startLocation.x < 60,
-                       value.translation.width > 70,
-                       abs(value.translation.width) > abs(value.translation.height) * 1.5 {
+                        value.translation.width > 70,
+                        abs(value.translation.width) > abs(value.translation.height) * 1.5
+                    {
                         dismiss()
                     }
                 }
@@ -91,6 +92,7 @@ struct DetailView: View {
                     )
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Back")
 
             Spacer()
 
@@ -112,6 +114,8 @@ struct DetailView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Looks good")
+                    .accessibilityHint("Confirms the extracted details without editing")
                 }
 
                 // Editing mid-extraction would race the pipeline's own write.
@@ -130,6 +134,7 @@ struct DetailView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Edit coffee")
                 }
 
                 Button {
@@ -147,6 +152,7 @@ struct DetailView: View {
                         )
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Delete coffee")
             }
         }
     }
@@ -204,6 +210,7 @@ struct DetailView: View {
                 .tint(palette.muted)
             Text("Reading the label")
                 .font(.app(15, weight: .semibold))
+                .accessibilityAddTraits(.updatesFrequently)
                 .foregroundStyle(palette.fg)
             Text("This usually takes a few seconds. We'll notify you when it's ready to review.")
                 .font(.app(13))
@@ -245,6 +252,19 @@ struct DetailView: View {
                             .frame(height: 22)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityHidden(true)
+                }
+            }
+            // One adjustable control rather than ten unlabeled 22pt targets.
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Your rating")
+            .accessibilityValue(coffee.rating.map { "\($0) out of 10" } ?? "Not rated")
+            .accessibilityAdjustableAction { direction in
+                let current = coffee.rating ?? 0
+                switch direction {
+                case .increment where current < 10: viewModel.setRating(current + 1)
+                case .decrement where current > 1: viewModel.setRating(current - 1)
+                default: break
                 }
             }
             if coffee.rating == nil {

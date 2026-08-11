@@ -46,7 +46,9 @@ public final class InsightsViewModel {
                 byCountry[country] = (1, lat, lng)
             }
         }
-        return byCountry.map { OriginStat(country: $0.key, count: $0.value.count, lat: $0.value.lat, lng: $0.value.lng) }
+        return byCountry.map {
+            OriginStat(country: $0.key, count: $0.value.count, lat: $0.value.lat, lng: $0.value.lng)
+        }
     }
 
     public var maxCount: Int {
@@ -128,7 +130,8 @@ public final class InsightsViewModel {
             let month = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) ?? date
             byMonth[month, default: []].append(coffee)
         }
-        return byMonth
+        return
+            byMonth
             .sorted { $0.key > $1.key }
             .map { month, coffees in
                 TimelineGroup(
@@ -161,7 +164,8 @@ public final class InsightsViewModel {
         if let raw = coffee.roastDate {
             let parts = raw.split(separator: "-")
             if parts.count >= 2, let year = Int(parts[0]), let month = Int(parts[1]),
-               (1...12).contains(month) {
+                (1...12).contains(month)
+            {
                 let day = parts.count >= 3 ? Int(parts[2]) : nil
                 if let date = Calendar.current.date(from: DateComponents(year: year, month: month, day: day ?? 1)) {
                     return date

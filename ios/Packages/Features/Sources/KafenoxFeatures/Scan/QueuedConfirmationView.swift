@@ -17,6 +17,7 @@ struct QueuedConfirmationView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 44))
                     .foregroundStyle(Palette.success)
+                    .accessibilityHidden(true)
                     .scaleEffect(appeared ? 1 : 0.7)
                     .opacity(appeared ? 1 : 0)
 

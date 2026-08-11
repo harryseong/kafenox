@@ -48,6 +48,7 @@ public struct ScanFlowView: View {
                 .frame(width: 36, height: 36)
                 .overlay(Circle().stroke(Color.white.opacity(0.22), lineWidth: 1))
         }
+        .accessibilityLabel("Cancel scan")
         .padding(.top, 14)
         .padding(.leading, 16)
     }

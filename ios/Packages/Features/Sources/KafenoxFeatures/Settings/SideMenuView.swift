@@ -20,6 +20,7 @@ struct MenuButton: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Menu")
     }
 }
 
@@ -63,6 +64,7 @@ public struct SideMenuView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Close menu")
                 }
 
                 Text("Menu")
