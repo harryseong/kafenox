@@ -1,0 +1,6 @@
+#include "Base.xcconfig"
+
+BUNDLE_ID_SUFFIX =
+
+// Points at dev until a prod stage exists; change here, not in code.
+API_BASE_URL = ivtb3d1a1f.execute-api.ap-southeast-1.amazonaws.com/dev

@@ -5,29 +5,52 @@ options:
     iOS: "26.0"
   createIntermediateGroups: true
 
-settings:
-  SWIFT_VERSION: "6.0"
+configs:
+  Debug: debug
+  Release: release
+
+# Build settings live in Config/*.xcconfig, not here and not in the Xcode
+# inspector, so they diff readably.
+configFiles:
+  Debug: Config/Debug.xcconfig
+  Release: Config/Release.xcconfig
+
+packages:
+  Core:
+    path: ../Packages/Core
+  DesignSystem:
+    path: ../Packages/DesignSystem
+  Networking:
+    path: ../Packages/Networking
+  Features:
+    path: ../Packages/Features
 
 targets:
   Kafenox:
     type: application
     platform: iOS
+    # The app target is deliberately thin: @main, the composition root, and
+    # the tab shell. Real code lives in ../Packages.
     sources:
       - path: Kafenox
         excludes:
           - Info.plist
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.harryseong.kafenox
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-        ENABLE_PREVIEWS: YES
-        DEVELOPMENT_TEAM: ""
+    dependencies:
+      - package: Core
+        product: KafenoxCore
+      - package: DesignSystem
+        product: KafenoxDesignSystem
+      - package: Networking
+        product: KafenoxNetworking
+      - package: Features
+        product: KafenoxFeatures
     info:
       path: Kafenox/Info.plist
       properties:
         UILaunchScreen: {}
         NSCameraUsageDescription: "Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically."
+        # Read once by AppConfiguration; fed from Config/*.xcconfig.
+        API_BASE_URL: $(API_BASE_URL)
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
@@ -38,7 +61,3 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        UIAppFonts:
-          - HankenGrotesk-Variable.ttf
-          - DMMono-Regular.ttf
-          - DMMono-Medium.ttf

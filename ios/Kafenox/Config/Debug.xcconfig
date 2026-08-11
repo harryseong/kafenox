@@ -1,0 +1,8 @@
+#include "Base.xcconfig"
+
+BUNDLE_ID_SUFFIX =
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEBUG
+
+// Host only -- AppConfiguration prepends the scheme. The `$()` splits the
+// `//` that xcconfig would otherwise treat as a comment.
+API_BASE_URL = ivtb3d1a1f.execute-api.ap-southeast-1.amazonaws.com/dev
