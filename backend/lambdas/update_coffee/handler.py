@@ -56,8 +56,10 @@ def handler(event, context):
     # Optional Settings-driven model choice for categorizing new flavor
     # notes; not a persisted field.
     model_choice = body.get("model")
+    # "Looks good" confirms an extracted item as-is, with no field edits.
+    verify_only = body.get("verified") is True
     updates = {k: v for k, v in body.items() if k in EDITABLE_FIELDS}
-    if not updates:
+    if not updates and not verify_only:
         return {"statusCode": 400, "body": json.dumps({"message": "No editable fields provided"})}
 
     try:
@@ -75,8 +77,8 @@ def handler(event, context):
         updates["flavorFamilies"] = _families_for(item, updates["flavorNotes"] or [], model_choice)
 
     # Any manual field edit (other than just setting a rating) marks the
-    # item as human-verified.
-    if set(updates) - {"rating"}:
+    # item as human-verified, as does an explicit "looks good" confirmation.
+    if verify_only or (set(updates) - {"rating"}):
         updates["isVerified"] = True
 
     for field, value in updates.items():

@@ -1,7 +1,9 @@
 import SwiftUI
+import UserNotifications
 
 struct RootView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     @State private var themeStore = ThemeStore()
     @State private var settingsStore = SettingsStore.shared
     @State private var catalogViewModel = CatalogViewModel()
@@ -58,9 +60,19 @@ struct RootView: View {
             }
         }
         .environment(themeStore)
-        .onAppear { themeStore.systemIsDark = colorScheme == .dark }
+        .onAppear {
+            themeStore.systemIsDark = colorScheme == .dark
+            configureUploadQueueMonitor()
+        }
         .onChange(of: colorScheme) { _, scheme in
             themeStore.systemIsDark = scheme == .dark
+        }
+        // Coming back to the app, pick up watching anything the last catalog
+        // load says is still extracting -- the monitor's poll loop doesn't
+        // survive being suspended for long.
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            UploadQueueMonitor.shared.resume(from: catalogViewModel.coffees)
         }
         .fullScreenCover(isPresented: $isSettingsPresented) {
             SettingsView(settings: settingsStore)
@@ -69,15 +81,27 @@ struct RootView: View {
         .fullScreenCover(isPresented: $isScanPresented) {
             ScanFlowView(
                 viewModel: scanViewModel,
-                onAdd: { coffee in
+                onQueued: {
                     isScanPresented = false
                     activeTab = .catalog
-                    catalogPath.append(coffee)
+                    // upload_init already wrote a PENDING row, so this reload
+                    // immediately shows the queued coffee as "Processing".
                     Task { await catalogViewModel.load() }
                 },
                 onClose: { isScanPresented = false }
             )
             .environment(themeStore)
+        }
+    }
+
+    private func configureUploadQueueMonitor() {
+        let monitor = UploadQueueMonitor.shared
+        monitor.attach(catalog: catalogViewModel)
+        UNUserNotificationCenter.current().delegate = monitor
+        monitor.onTapPhotoId = { photoId in
+            activeTab = .catalog
+            guard let coffee = catalogViewModel.coffees.first(where: { $0.photoId == photoId }) else { return }
+            catalogPath.append(coffee)
         }
     }
 

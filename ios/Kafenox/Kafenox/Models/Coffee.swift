@@ -6,8 +6,11 @@ struct Coffee: Codable, Identifiable, Hashable {
     var id: String { photoId }
 
     let photoId: String
-    let status: String
-    let errorMessage: String?
+    /// Extraction-pipeline state: PENDING -> PROCESSING -> COMPLETE/FAILED.
+    /// Mutable so the upload-queue monitor can patch a single tracked item
+    /// in place instead of reloading the whole catalog on every poll tick.
+    var status: String
+    var errorMessage: String?
     let createdAt: String?
 
     var roaster: String?

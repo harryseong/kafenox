@@ -122,10 +122,14 @@ struct CoffeeListRow: View {
 
             Spacer()
 
-            Text(ratingText)
-                .font(.app(13, weight: .semibold))
-                .monospacedDigit()
-                .foregroundStyle(palette.muted)
+            if let badge = CoffeeStatusBadge(coffee: coffee) {
+                StatusBadgeView(kind: badge, palette: palette)
+            } else {
+                Text(ratingText)
+                    .font(.app(13, weight: .semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(palette.muted)
+            }
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 12, weight: .medium))
@@ -137,9 +141,14 @@ struct CoffeeListRow: View {
     }
 
     private var subtitle: String {
-        [coffee.roaster, coffee.originLabel.isEmpty ? nil : coffee.originLabel]
+        let text = [coffee.roaster, coffee.originLabel.isEmpty ? nil : coffee.originLabel]
             .compactMap { $0 }
             .joined(separator: " · ")
+        guard text.isEmpty else { return text }
+        // A queued scan has no extracted fields yet; say why it's blank.
+        if coffee.isProcessing { return "Reading the label…" }
+        if coffee.isFailedExtraction { return coffee.errorMessage ?? "Couldn't read that label" }
+        return ""
     }
 
     private var ratingText: String {

@@ -66,12 +66,12 @@ struct ScanningView: View {
                             .frame(width: 18, height: 18)
                             .rotationEffect(.degrees(spin ? 360 : 0))
                     )
-                Text("Reading label with AI")
+                Text("Uploading photo")
                     .font(.app(16, weight: .semibold))
                     .foregroundStyle(.white)
             }
 
-            Text("Extracting details from the label")
+            Text("Reading the label happens in the background")
                 .font(.app(12.5))
                 .foregroundStyle(.white.opacity(0.45))
 

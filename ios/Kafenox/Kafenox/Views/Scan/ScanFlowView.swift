@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// Hosts the full-screen Scan -> Scanning -> Review flow, switching on
+/// Hosts the full-screen Scan -> Uploading -> Queued flow, switching on
 /// ScanViewModel.step. Presented via .fullScreenCover from the tab bar's
-/// floating scan button; dismissing this view (X button, or after a
-/// successful "Add to collection") returns to whichever tab was active.
+/// floating scan button; dismissing this view (X button, or once the upload
+/// is queued) returns to whichever tab was active.
 struct ScanFlowView: View {
     let viewModel: ScanViewModel
-    var onAdd: (Coffee) -> Void
+    var onQueued: () -> Void
     var onClose: () -> Void
 
     var body: some View {
@@ -18,21 +18,16 @@ struct ScanFlowView: View {
                     onCancel: onClose
                 )
                 .ignoresSafeArea()
-            case .scanning, .failed:
+            case .uploading, .failed:
                 ScanningView(viewModel: viewModel, onClose: onClose)
                     .overlay(alignment: .topLeading) {
                         closeButton
                     }
-            case .review:
-                ReviewView(
-                    viewModel: viewModel,
-                    onAdd: onAdd,
-                    onRetake: { viewModel.retake() },
-                    onClose: onClose
-                )
+            case .queued:
+                QueuedConfirmationView(onDone: onQueued)
             }
         }
-        .onDisappear { viewModel.cancelPolling() }
+        .onDisappear { viewModel.cancelUpload() }
     }
 
     private var closeButton: some View {
