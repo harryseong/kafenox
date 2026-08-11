@@ -38,7 +38,3 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        UIAppFonts:
-          - HankenGrotesk-Variable.ttf
-          - DMMono-Regular.ttf
-          - DMMono-Medium.ttf

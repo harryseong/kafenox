@@ -20,12 +20,6 @@
 	<string>1</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Kafenox uses your camera to photograph coffee bag labels so it can extract the coffee details automatically.</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>HankenGrotesk-Variable.ttf</string>
-		<string>DMMono-Regular.ttf</string>
-		<string>DMMono-Medium.ttf</string>
-	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
