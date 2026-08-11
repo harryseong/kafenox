@@ -61,9 +61,7 @@ public struct CatalogView: View {
         .refreshable { await viewModel.load() }
         .sheet(item: $editingCoffee) { coffee in
             EditCoffeeView(coffee: coffee) { updated in
-                if let idx = viewModel.coffees.firstIndex(where: { $0.photoId == updated.photoId }) {
-                    viewModel.coffees[idx] = updated
-                }
+                viewModel.upsert(updated)
             }
             .environment(themeStore)
         }
@@ -85,13 +83,11 @@ public struct CatalogView: View {
         guard let coffee = deletingCoffee else { return }
         isDeleting = true
         deleteError = nil
+        defer { isDeleting = false }
         do {
-            try await APIClient.shared.deleteCoffee(photoId: coffee.photoId)
-            viewModel.coffees.removeAll { $0.photoId == coffee.photoId }
-            isDeleting = false
+            try await viewModel.delete(photoId: coffee.photoId)
             deletingCoffee = nil
         } catch {
-            isDeleting = false
             deleteError = "Couldn't delete — try again."
         }
     }
@@ -100,13 +96,13 @@ public struct CatalogView: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 5) {
                 Text("Collection")
-                    .font(.app(32, weight: .bold))
+                    .appFont(32, weight: .bold)
                     .tracking(-0.8)
                     .foregroundStyle(palette.fg)
                     .lineLimit(2)
                     .minimumScaleFactor(0.6)
                 Text(viewModel.metaLine)
-                    .font(.app(13, weight: .medium))
+                    .appFont(13, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
             Spacer()
@@ -123,7 +119,7 @@ public struct CatalogView: View {
                     .foregroundStyle(palette.muted)
                     .accessibilityHidden(true)
                 TextField("Search flavor, origin, roaster", text: Bindable(viewModel).query)
-                    .font(.app(14))
+                    .appFont(14)
                     .foregroundStyle(palette.fg)
             }
             .padding(.horizontal, 13)
@@ -155,7 +151,7 @@ public struct CatalogView: View {
                         viewModel.roastFilter = filter
                     } label: {
                         Text(filter)
-                            .font(.app(13, weight: .semibold))
+                            .appFont(13, weight: .semibold)
                             .padding(.horizontal, 15)
                             .padding(.vertical, 7)
                             .foregroundStyle(active ? palette.bg : palette.muted)
@@ -173,10 +169,10 @@ public struct CatalogView: View {
         if viewModel.filtered.isEmpty {
             VStack(spacing: 6) {
                 Text("No coffees match")
-                    .font(.app(15, weight: .semibold))
+                    .appFont(15, weight: .semibold)
                     .foregroundStyle(palette.fg)
                 Text("Try a different flavor, origin, or roast.")
-                    .font(.app(13))
+                    .appFont(13)
                     .foregroundStyle(palette.muted)
             }
             .frame(maxWidth: .infinity)

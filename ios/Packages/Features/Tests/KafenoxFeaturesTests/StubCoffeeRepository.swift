@@ -14,11 +14,26 @@ actor StubCoffeeRepository: CoffeeRepository {
     private var listResult: Result<[Coffee], Error> = .success([])
     private var shouldFailStatus = false
     private var shouldFailFetch = false
+    private var shouldFailDelete = false
 
     private(set) var verifiedPhotoIds: [String] = []
     private(set) var deletedPhotoIds: [String] = []
-    private(set) var updates: [(photoId: String, fields: [String: Sendable])] = []
+    private(set) var updates: [(photoId: String, update: CoffeeUpdate)] = []
     private(set) var statusPollCount = 0
+
+    /// Recorded Ask AI calls, so tests can assert the history snapshot and
+    /// the Settings-selected model actually reach the transport.
+    struct Ask: Equatable {
+        let question: String
+        let history: [ChatTurn]
+        let model: String?
+    }
+    private(set) var asks: [Ask] = []
+    private var shouldFailAsk = false
+    private var answer = "stub answer"
+
+    func setAsk(answer: String) { self.answer = answer }
+    func setAskFailing(_ failing: Bool) { shouldFailAsk = failing }
 
     init() {}
 
@@ -29,6 +44,7 @@ actor StubCoffeeRepository: CoffeeRepository {
     func setStatusScript(_ statuses: [String], for photoId: String) { statusScript[photoId] = statuses }
     func setStatusFailing(_ failing: Bool) { shouldFailStatus = failing }
     func setFetchFailing(_ failing: Bool) { shouldFailFetch = failing }
+    func setDeleteFailing(_ failing: Bool) { shouldFailDelete = failing }
 
     // MARK: CoffeeRepository
 
@@ -40,11 +56,17 @@ actor StubCoffeeRepository: CoffeeRepository {
         return coffee
     }
 
-    func updateCoffee(photoId: String, fields: [String: Sendable]) async throws -> Coffee {
-        updates.append((photoId, fields))
+    func updateCoffee(photoId: String, _ update: CoffeeUpdate) async throws -> Coffee {
+        updates.append((photoId, update))
         guard var coffee = coffees[photoId] else { throw Failure() }
-        if let rating = fields["rating"] as? Int { coffee.rating = rating }
-        if fields.keys.contains(where: { $0 != "rating" }) { coffee.isVerified = true }
+        if let rating = update.rating { coffee.rating = rating }
+        if let roaster = update.roaster { coffee.roaster = roaster }
+        if let name = update.coffeeName { coffee.coffeeName = name }
+        if let notes = update.flavorNotes { coffee.flavorNotes = notes }
+        // Mirrors the backend: any edit other than a bare rating verifies.
+        if update.payload.keys.contains(where: { $0 != "rating" && $0 != "model" }) {
+            coffee.isVerified = true
+        }
         coffees[photoId] = coffee
         return coffee
     }
@@ -58,6 +80,7 @@ actor StubCoffeeRepository: CoffeeRepository {
     }
 
     func deleteCoffee(photoId: String) async throws {
+        if shouldFailDelete { throw Failure() }
         deletedPhotoIds.append(photoId)
         coffees[photoId] = nil
     }
@@ -79,6 +102,8 @@ actor StubCoffeeRepository: CoffeeRepository {
     }
 
     func askInsights(question: String, history: [ChatTurn], model: String?) async throws -> String {
-        "stub answer"
+        asks.append(Ask(question: question, history: history, model: model))
+        if shouldFailAsk { throw Failure() }
+        return answer
     }
 }

@@ -26,9 +26,14 @@ public final class AskAIViewModel {
     public var isError = false
 
     private let repository: any CoffeeRepository
+    private let settings: SettingsStore
 
-    public init(repository: any CoffeeRepository = APIClient.shared) {
+    public init(
+        repository: any CoffeeRepository = APIClient.shared,
+        settings: SettingsStore = .shared
+    ) {
         self.repository = repository
+        self.settings = settings
     }
 
     public var showsEmptyState: Bool { messages.isEmpty && !isBusy && !isError }
@@ -52,7 +57,7 @@ public final class AskAIViewModel {
                 let answer = try await repository.askInsights(
                     question: question,
                     history: history,
-                    model: SettingsStore.shared.model(for: .ask).rawValue
+                    model: settings.model(for: .ask).rawValue
                 )
                 messages.append(ChatMessage(role: .assistant, text: answer))
             } catch {

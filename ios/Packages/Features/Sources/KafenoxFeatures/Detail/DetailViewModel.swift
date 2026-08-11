@@ -23,7 +23,7 @@ public final class DetailViewModel {
         syncCatalog()
         Task {
             do {
-                let updated = try await repository.updateCoffee(photoId: coffee.photoId, fields: ["rating": n])
+                let updated = try await repository.updateCoffee(photoId: coffee.photoId, CoffeeUpdate(rating: n))
                 coffee = updated
                 syncCatalog()
             } catch {

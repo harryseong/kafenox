@@ -56,6 +56,35 @@ struct DetailViewModelTests {
         #expect(await repo.deletedPhotoIds == ["a"])
     }
 
+    /// The rating strip fires on every tap, so it must send only the rating --
+    /// anything else would flip isVerified server-side as a side effect.
+    @Test("Rating a coffee sends only the rating")
+    func ratingSendsOnlyRating() async throws {
+        let coffee = Coffee(photoId: "a", status: "COMPLETE", isVerified: false)
+        let (model, _, repo) = await setUp(coffee)
+
+        model.setRating(7)
+        try await waitUntilUpdate(repo)
+
+        let recorded = try #require(await repo.updates.first)
+        #expect(recorded.photoId == "a")
+        #expect(recorded.update == CoffeeUpdate(rating: 7))
+        #expect(recorded.update.payload.keys.sorted() == ["rating"])
+    }
+
+    @Test("Confirming sends the verified flag and nothing else")
+    func verifySendsOnlyFlag() async {
+        #expect(CoffeeUpdate(verified: true).payload.keys.sorted() == ["verified"])
+        #expect(!CoffeeUpdate(verified: true).isEmpty)
+    }
+
+    @Test("An update with no fields set is empty, and a model alone doesn't count")
+    func emptyUpdate() {
+        #expect(CoffeeUpdate().isEmpty)
+        #expect(CoffeeUpdate(model: "haiku").isEmpty, "a model only qualifies an accompanying edit")
+        #expect(!CoffeeUpdate(flavorNotes: ["Peach"], model: "haiku").isEmpty)
+    }
+
     @Test("An edit applied from the edit sheet reaches the catalog row")
     func applyUpdateSyncsCatalog() async {
         let coffee = Coffee(photoId: "a", status: "COMPLETE", coffeeName: "Old")
@@ -66,5 +95,15 @@ struct DetailViewModelTests {
         model.applyUpdate(edited)
 
         #expect(catalog.coffees.first?.coffeeName == "New")
+    }
+
+    /// `setRating` is synchronous and dispatches its PATCH into a Task.
+    private func waitUntilUpdate(_ repo: StubCoffeeRepository) async throws {
+        let deadline = ContinuousClock.now + .seconds(10)
+        while ContinuousClock.now < deadline {
+            if await !repo.updates.isEmpty { return }
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        Issue.record("No update was recorded")
     }
 }

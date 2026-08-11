@@ -74,11 +74,15 @@ public final class SettingsStore {
     }
 
     private var models: [AIFeature: ModelChoice]
+    private let defaults: UserDefaults
 
-    public init() {
+    /// `defaults` is injectable so tests can use a throwaway suite instead of
+    /// writing the user's real preferences.
+    public init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         var loaded: [AIFeature: ModelChoice] = [:]
         for feature in AIFeature.allCases {
-            let stored = UserDefaults.standard.string(forKey: Self.key(for: feature))
+            let stored = defaults.string(forKey: Self.key(for: feature))
             loaded[feature] = stored.flatMap(ModelChoice.init(rawValue:)) ?? feature.defaultModel
         }
         models = loaded
@@ -90,6 +94,6 @@ public final class SettingsStore {
 
     public func setModel(_ model: ModelChoice, for feature: AIFeature) {
         models[feature] = model
-        UserDefaults.standard.set(model.rawValue, forKey: Self.key(for: feature))
+        defaults.set(model.rawValue, forKey: Self.key(for: feature))
     }
 }

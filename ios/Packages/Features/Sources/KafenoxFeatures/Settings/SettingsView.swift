@@ -21,7 +21,7 @@ public struct SettingsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Settings")
-                        .font(.app(26, weight: .bold))
+                        .appFont(26, weight: .bold)
                         .tracking(-0.6)
                         .foregroundStyle(palette.fg)
                     Spacer()
@@ -42,23 +42,23 @@ public struct SettingsView: View {
                     .accessibilityLabel("Close settings")
                 }
                 Text("Appearance and AI models")
-                    .font(.app(13, weight: .medium))
+                    .appFont(13, weight: .medium)
                     .foregroundStyle(palette.muted)
                     .padding(.top, 6)
 
                 Text("Appearance")
-                    .font(.app(12, weight: .semibold))
+                    .appFont(12, weight: .semibold)
                     .foregroundStyle(palette.muted)
                     .padding(.top, 24)
                 themeCard(palette: palette)
                     .padding(.top, 10)
 
                 Text("AI models")
-                    .font(.app(12, weight: .semibold))
+                    .appFont(12, weight: .semibold)
                     .foregroundStyle(palette.muted)
                     .padding(.top, 28)
                 Text("Anthropic Claude via Amazon Bedrock. Choose a model per feature.")
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .foregroundStyle(palette.muted)
                     .padding(.top, 5)
 
@@ -89,11 +89,11 @@ public struct SettingsView: View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Theme")
-                    .font(.app(14.5, weight: .semibold))
+                    .appFont(14.5, weight: .semibold)
                     .tracking(-0.2)
                     .foregroundStyle(palette.fg)
                 Text("Applies across the whole app")
-                    .font(.app(12, weight: .medium))
+                    .appFont(12, weight: .medium)
                     .foregroundStyle(palette.muted)
             }
             Spacer(minLength: 0)
@@ -104,7 +104,7 @@ public struct SettingsView: View {
                         themeStore.choice = option
                     } label: {
                         Text(option.label)
-                            .font(.app(12.5, weight: .semibold))
+                            .appFont(12.5, weight: .semibold)
                             .lineLimit(1)
                             .fixedSize()
                             .foregroundStyle(active ? palette.bg : palette.muted)
@@ -147,16 +147,16 @@ public struct SettingsView: View {
                         )
                     VStack(alignment: .leading, spacing: 2) {
                         Text(feature.title)
-                            .font(.app(14, weight: .semibold))
+                            .appFont(14, weight: .semibold)
                             .tracking(-0.2)
                             .foregroundStyle(palette.fg)
                         Text(feature.subtitle)
-                            .font(.app(11.5, weight: .medium))
+                            .appFont(11.5, weight: .medium)
                             .foregroundStyle(palette.muted)
                     }
                     Spacer(minLength: 8)
                     Text(settings.model(for: feature).displayName)
-                        .font(.app(13, weight: .medium))
+                        .appFont(13, weight: .medium)
                         .foregroundStyle(palette.muted)
                         .lineLimit(1)
                     Image(systemName: "chevron.right")
@@ -191,12 +191,12 @@ public struct SettingsView: View {
         } label: {
             HStack(spacing: 10) {
                 Text(model.displayName)
-                    .font(.app(13.5, weight: .semibold))
+                    .appFont(13.5, weight: .semibold)
                     .tracking(-0.1)
                     .foregroundStyle(palette.fg)
                 Spacer(minLength: 0)
                 Text(model.tag)
-                    .font(.app(11, weight: .medium))
+                    .appFont(11, weight: .medium)
                     .foregroundStyle(palette.muted)
                 Image(systemName: "checkmark")
                     .font(.system(size: 12, weight: .semibold))

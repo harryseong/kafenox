@@ -14,7 +14,7 @@ struct AskAIScreen: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("Ask AI")
-                    .font(.app(26, weight: .bold))
+                    .appFont(26, weight: .bold)
                     .tracking(-0.6)
                     .foregroundStyle(palette.fg)
                 Spacer()
@@ -35,7 +35,7 @@ struct AskAIScreen: View {
                 .accessibilityLabel("Close")
             }
             Text(metaLine)
-                .font(.app(13, weight: .medium))
+                .appFont(13, weight: .medium)
                 .foregroundStyle(palette.muted)
                 .padding(.top, 6)
 
@@ -98,11 +98,11 @@ struct AskAIView: View {
                         .foregroundStyle(palette.fg)
                 )
             Text("Ask about your taste")
-                .font(.app(15.5, weight: .semibold))
+                .appFont(15.5, weight: .semibold)
                 .foregroundStyle(palette.fg)
                 .padding(.top, 12)
             Text("Answers are based on your ratings, origins, and flavor notes.")
-                .font(.app(13))
+                .appFont(13)
                 .foregroundStyle(palette.muted)
                 .lineSpacing(3)
                 .multilineTextAlignment(.center)
@@ -115,7 +115,7 @@ struct AskAIView: View {
                         viewModel.send(suggestion)
                     } label: {
                         Text(suggestion)
-                            .font(.app(13.5, weight: .medium))
+                            .appFont(13.5, weight: .medium)
                             .foregroundStyle(palette.fg)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 11)
@@ -146,7 +146,7 @@ struct AskAIView: View {
             }
             if viewModel.isError {
                 Text("Couldn't reach the model. Try again in a moment.")
-                    .font(.app(12.5))
+                    .appFont(12.5)
                     .foregroundStyle(Palette.error)
                     .padding(.vertical, 2)
                     .padding(.horizontal, 4)
@@ -159,7 +159,7 @@ struct AskAIView: View {
         return HStack {
             if fromUser { Spacer(minLength: 0) }
             Text(message.text)
-                .font(.app(13.5, weight: fromUser ? .medium : .regular))
+                .appFont(13.5, weight: fromUser ? .medium : .regular)
                 .foregroundStyle(fromUser ? palette.bg : palette.fg)
                 .lineSpacing(3)
                 .padding(.vertical, 10)
@@ -184,7 +184,7 @@ struct AskAIView: View {
                 .controlSize(.small)
                 .tint(palette.fg)
             Text("Thinking")
-                .font(.app(12.5, weight: .medium))
+                .appFont(12.5, weight: .medium)
                 .foregroundStyle(palette.muted)
         }
         .padding(.vertical, 11)
@@ -199,7 +199,7 @@ struct AskAIView: View {
     private var composer: some View {
         HStack(spacing: 8) {
             TextField("What should I try next?", text: $viewModel.input)
-                .font(.app(14))
+                .appFont(14)
                 .foregroundStyle(palette.fg)
                 .focused($inputFocused)
                 .submitLabel(.send)
